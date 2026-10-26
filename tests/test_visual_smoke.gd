@@ -17,6 +17,32 @@ func run() -> void:
 	check(scene.world.sprites.size() == scene.world.objects.size(),"All objects use Sprite2D PNGs")
 	check(scene.world.catalog.size() == 16,"16 asset definitions loaded")
 	check(scene.viewport.size == Vector2i(640,360),"Pixel world viewport")
+	check(scene.world.tile_half*4 == Vector2(48,24),"Tile is 48x24 screen pixels at 100 percent")
+	var footprints: Array[Dictionary] = []
+	var cells: Dictionary = {}
+	var non_overlapping := true
+	var inside := true
+	for obj in scene.world.objects:
+		if not obj.has("origin"): continue
+		footprints.append(obj)
+		for cell in scene.world.footprint_cells(obj):
+			if cells.has(cell): non_overlapping = false
+			cells[cell] = true
+			if cell.x<0 or cell.y<0 or cell.x>=20 or cell.y>=20: inside = false
+	check(non_overlapping and inside,"All footprint cells unique and inside the map")
+	var spacing := true
+	for i in range(footprints.size()):
+		for j in range(i+1,footprints.size()):
+			var a := Rect2i(footprints[i].origin,footprints[i].footprint)
+			var b := Rect2i(footprints[j].origin,footprints[j].footprint)
+			if not (a.end.x<b.position.x or b.end.x<a.position.x or a.end.y<b.position.y or b.end.y<a.position.y): spacing = false
+	check(spacing,"At least one empty tile separates major footprints")
+	var road_clear := true
+	for cell in scene.world.roads:
+		if scene.world.blocked.has(cell): road_clear = false
+	check(road_clear,"Road cells do not cross solid footprint cells")
+	check(scene.world.roads.has(Vector2i(9,16)) and not scene.world.blocked.has(Vector2i(9,16)),"Gateway center remains a walkable road cell")
+	check(scene.world.blocked.has(Vector2i(8,16)) and scene.world.blocked.has(Vector2i(10,16)),"Gateway outer cells contain pillars")
 	scene.preview_build("house","Rumah")
 	check(scene.world.selected >= 0 and scene.info_panel.visible,"Build preview")
 	scene.show_quest()
@@ -49,6 +75,13 @@ func run() -> void:
 	await process_frame
 	check(scene.world.selected >= 0,"Actual viewport mouse selection")
 	check(scene.info.get_child(0).text.contains("Raras"),"Character detail from click")
+	# A gap in the gate artwork must select through; both opaque pillars map to one object.
+	scene.select_kind("gate")
+	var gate_index: int = scene.world.selected
+	var left: Sprite2D = scene.world.sprites[gate_index]
+	var right: Sprite2D = scene.world.extra_sprites[0].sprite
+	check(scene.world.pick(left.position+Vector2(0,-12)) == gate_index and scene.world.pick(right.position+Vector2(0,-12)) == gate_index,"Both gateway pillars select the gateway")
+	check(scene.world.pick(scene.world.iso(Vector2(9,16))) != gate_index,"Gateway center selects through")
 	scene.world.selected = -1
 	scene.world.queue_redraw()
 	scene.info_panel.hide()
@@ -56,6 +89,11 @@ func run() -> void:
 	await process_frame
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
-		check(root.get_texture().get_image().save_png("res://docs/screenshots/visual_after.png") == OK,"AFTER screenshot saved")
+		check(root.get_texture().get_image().save_png("res://docs/screenshots/proportion_after.png") == OK,"Proportion AFTER screenshot saved")
+		scene.world.show_footprints = true
+		scene.world.queue_redraw()
+		await process_frame
+		await RenderingServer.frame_post_draw
+		check(root.get_texture().get_image().save_png("res://docs/screenshots/footprints_overlay.png") == OK,"Footprint overlay screenshot saved")
 	print("VISUAL SMOKE FAILURES: ",failures)
 	quit(failures)

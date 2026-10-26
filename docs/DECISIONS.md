@@ -45,3 +45,7 @@ Optional rewarded ads may speed limited activities; core story/strategic play mu
 
 ## Design risk
 This is a large game for one beginner developer. Build vertical slices with strict scope and prototypes. Approval of a feature's vision does NOT imply it is scheduled for first release.
+
+## Confirmed visual proportion baseline — 27 October 2026
+
+Direct Game Director instruction approves the current Nusantara pixel-art direction, while requiring scale/layout revision. The [Proporsi & Footprint rules](PROPORTIONS_FOOTPRINTS.md) capture the explicit initial baseline: visual tile 48×24, house/granary/minimum paddy 2×2, paddy variants 3×2/4×4, gate 3×1 with walkable center or large 3×2, pendopo 3×3 or main 4×4, important buildings at least one tier larger, main road and default gap 1 tile, sprite overhang allowed. This confirms direction and baseline, not individual historical claims, final composition acceptance or new mechanics scope.

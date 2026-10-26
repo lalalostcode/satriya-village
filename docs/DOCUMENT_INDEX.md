@@ -35,7 +35,8 @@ Mulai di sini untuk menemukan dokumen proyek dan mengetahui fungsi masing-masing
 | [AI Agent Strategy](AI_AGENT_STRATEGY.md) | Menetapkan peran logis, kepemilikan file, alur review, dan quality gates. | Proposal organisasi; tidak mengaktifkan agent otomatis. |
 | [Execution Blueprint](EXECUTION_BLUEPRINT.md) | Mengurutkan pekerjaan dari audit baseline sampai pilot, dengan gate dan contoh task. | Backlog usulan; bukan otorisasi implementasi. |
 | [Architecture](ARCHITECTURE.md) | Ringkasan struktur starter yang ada dan modul produksi yang direncanakan. | Catatan arsitektur awal; modul rencana belum tentu ada. |
-| [Art & UX Guide](ART_UX_GUIDE.md) | Standar visual utama: identitas Nusantara, pixel art teknis, palet warna, karakter chibi, arsitektur, UI/UX, pipeline Godot, performa, QA, dan art brief template. | DRAFT v1.0; semua spesifikasi baru PROPOSED kecuali yang merujuk CONFIRMED di DECISIONS. |
+| [Art & UX Guide](ART_UX_GUIDE.md) | Standar visual utama: identitas Nusantara, pixel art teknis, palet warna, karakter chibi, arsitektur, UI/UX, pipeline Godot, performa, QA, dan art brief template. | DRAFT v1.0; baseline proporsi terbaru di dokumen berikut mengesampingkan angka PROPOSED yang berbeda. |
+| [Proporsi & Footprint](PROPORTIONS_FOOTPRINTS.md) | Baseline tile 48×24, footprint/tier, jarak, overhang, layout aktual dan screenshot perbandingan. | Baseline Director 27 Oktober 2026; arah visual APPROVED, hasil proporsi menunggu review. |
 
 ## Cara memakai status
 

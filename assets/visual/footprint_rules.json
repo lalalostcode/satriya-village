@@ -1,0 +1,21 @@
+{
+  "screen_tile_at_1280": [48, 24],
+  "world_pixel_scale": 2,
+  "default_building_gap": 1,
+  "main_road_width_tiles": 1,
+  "footprints": {
+    "house": {"size": [2, 2], "tier": 1, "sprite_width": 52},
+    "granary": {"size": [2, 2], "tier": 1, "sprite_width": 50},
+    "field": {"size": [2, 2], "tier": 0, "sprite_width": 48},
+    "field_3x2": {"size": [3, 2], "tier": 0},
+    "field_4x4": {"size": [4, 4], "tier": 0},
+    "gate": {"size": [3, 1], "tier": 2, "walkable_columns": [1], "pillar_width": 18},
+    "gate_large": {"size": [3, 2], "tier": 3, "walkable_columns": [1]},
+    "pendopo_small": {"size": [3, 3], "tier": 2},
+    "pendopo": {"size": [4, 4], "tier": 3, "sprite_width": 104},
+    "joglo": {"size": [3, 3], "tier": 2, "sprite_width": 78}
+  },
+  "decoration_widths": {"tree": 38, "palm": 34, "banana": 26, "bamboo": 28, "flowers": 14, "fence": 28, "bridge": 32},
+  "character_height": 22,
+  "status": "DIRECTOR_BASELINE_2026_10_27"
+}

@@ -1267,3 +1267,7 @@ Game Director telah menyukai konsep gambar desa Nusantara isometrik yang memilik
 ## Implemented sprite review checkpoint — 26 October 2026
 
 Director rejected the procedural visual. The current F5 scene uses 16 original AI-generated transparent PNG candidates, with compact conditional UI. The supplied Nusantara village illustration is now available to the chat as architecture/mood reference; the supplied game screenshot is readability reference only, never a source of copied sprites. Art remains REVISE, not approved. See [actual asset inventory, PNG replacement pipeline, remaining assets and verification](../assets/visual/README.md). Prior proposed dimensions remain proposals; the review scene's 40×20 native grid and 640×360 pixel world are provisional implementation choices.
+
+## Director baseline override — 27 October 2026
+
+The Director explicitly **APPROVED the current Nusantara visual direction** and requested proportion refinement. [Proporsi & Footprint](PROPORTIONS_FOOTPRINTS.md) now owns the active baseline: 48×24 screen tile at 1280×720/100% (24×12 native at 2×), house/granary/paddy minimum 2×2, gate 3×1 with open center or large 3×2, pendopo 3×3 or main 4×4, important buildings one tier larger, road/gap 1 tile, visual overhang allowed. These explicit rules supersede conflicting earlier PROPOSED metrics here. Individual art production readiness, period accuracy, Android performance and acceptance of the revised composition remain separate. Retain approved style.

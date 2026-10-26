@@ -1,10 +1,12 @@
 # Current F5 target — sprite visual review
 
-26 October 2026: Director rejected the procedural visual prototype. F5 now opens `scenes/visual_village.tscn` with 16 transparent PNG sprite candidates, a compact HUD, hidden detail/build panels, object selection and camera controls. **Visual status: REVISE, awaiting Director review.** All UI data is mock data; this scene does not write saves or run the economy.
+26 October 2026: Director rejected the procedural visual prototype. F5 now opens `scenes/visual_village.tscn` with 16 transparent PNG sprite candidates, a compact HUD, hidden detail/build panels, object selection and camera controls. **Visual direction APPROVED; footprint/proportion revision awaiting review (27 October 2026).** All UI data is mock data; this scene does not write saves or run the economy.
 
 Press **F5** in Godot 4.7.2. Use **Bangun**, **Krisis pangan**, click an object, drag, scroll, and **Reset**. **Esc** closes panels; **Space** pauses decorative idle. The preserved mechanics demo is `scenes/main.tscn`: open it and press **F6**.
 
-[Asset inventory, replacement pipeline and manual review](assets/visual/README.md) · [BEFORE](docs/screenshots/visual_before.png) · [AFTER](docs/screenshots/visual_after.png). Sprite art is AI-generated and unapproved; ground tiles and UI borders remain placeholders. Parser/import and 15 focused rendered checks passed; Android and human acceptance of the rework remain untested. No complex mechanics expansion before visual approval.
+[Asset inventory, replacement pipeline and manual review](assets/visual/README.md) · [BEFORE](docs/screenshots/visual_before.png) · [AFTER](docs/screenshots/visual_after.png). Sprite art is AI-generated; its visual direction is approved, while individual production cleanup remains pending; ground tiles and UI borders remain placeholders. Parser/import and 24 focused rendered footprint/frontend checks passed; Android and human acceptance of the revised composition remain untested. Current scope remains visual proportion and footprint; approval does not authorize major mechanics.
+
+**Current proportion baseline:** tile **48×24 px** on the 1280×720 display at 100%; house/granary/paddy **2×2**, important joglo **3×3**, main balai **4×4**, standard gateway **3×1** with open center. Main road and default building gap are **1 tile**. **G** toggles footprint overlay. [Rules and footprint table](docs/PROPORTIONS_FOOTPRINTS.md) · [Proportion BEFORE](docs/screenshots/proportion_before.png) · [Proportion AFTER](docs/screenshots/proportion_after.png) · [Overlay](docs/screenshots/footprints_overlay.png).
 
 ---
 

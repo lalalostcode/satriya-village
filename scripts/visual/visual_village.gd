@@ -44,7 +44,7 @@ func _build_world() -> void:
 	add_child(image)
 
 func _layout_world() -> void:
-	world.position = Vector2(320,60) + pan
+	world.position = Vector2(320,66) + pan
 	world.scale = Vector2.ONE * zoom_level
 
 func style(bg: String, border: String = "b79a59") -> StyleBoxFlat:
@@ -139,7 +139,7 @@ func _build_ui() -> void:
 	zoom_label = label(bar,"100%",16,"f3d99b")
 	button(bar,"+",func() -> void: set_zoom(zoom_level+0.25))
 	button(bar,"Reset",reset_view)
-	status = label(ui,"Klik objek · Geser peta · Scroll zoom\nEsc: tutup panel  /  Spasi: idle",14,"e4edcb")
+	status = label(ui,"Klik objek · Geser peta · Scroll zoom\nG: footprint / Esc: tutup / Spasi: idle",14,"e4edcb")
 	status.position = Vector2(792,658)
 
 func show_info(title: String, subtitle: String, body: String) -> void:
@@ -185,9 +185,11 @@ func select_at(screen: Vector2) -> void:
 			"field":"Padi muda dan pematang.\nSaluran air melewati sawah.\n\nHasil contoh: 12 ikat / hari.",
 			"granary":"Lantai panggung dan tangga.\nTempat menyimpan hasil padi.\n\nKapasitas contoh: 200 ikat.",
 			"pendopo":"Balai terbuka beratap susun.\nTempat warga berkumpul.\n\nInspirasi joglo Nusantara.",
-			"gate":"Gapura bata sebagai\npenanda masuk desa.\n\nInspirasi gaya Nusantara.",
+			"gate":"Dua pilar bata mengapit\nsatu tile jalan di tengah.\n\nInspirasi gaya Nusantara.",
 			"shrine":"Pelataran batu bertingkat.\nAksen budaya desa fiktif."}
-		show_info(obj.title,"SPRITE KANDIDAT · belum disetujui",descriptions.get(role,"Vegetasi tropis dekoratif.\nBagian dari komposisi desa.")+"\n\nBukan rekonstruksi sejarah.")
+		var subtitle := "SPRITE CONTOH · arah disetujui"
+		if obj.has("footprint"): subtitle = "FOOTPRINT %d×%d · DATA CONTOH" % [obj.footprint.x,obj.footprint.y]
+		show_info(obj.title,subtitle,descriptions.get(role,"Vegetasi tropis dekoratif.\nBagian dari komposisi desa.")+"\n\nBukan rekonstruksi sejarah.")
 
 func set_zoom(value: float) -> void:
 	zoom_level = clampf(value,0.75,1.5)
@@ -208,6 +210,9 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_G:
+			world.show_footprints = not world.show_footprints
+			world.queue_redraw()
 		if event.keycode == KEY_ESCAPE:
 			info_panel.hide()
 			build_panel.hide()
@@ -227,5 +232,3 @@ func _unhandled_input(event: InputEvent) -> void:
 			pan += event.relative / size * Vector2(640,360)
 			pan = pan.clamp(Vector2(-180,-100),Vector2(180,100))
 			_layout_world()
-
-
