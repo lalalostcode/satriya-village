@@ -1,3 +1,6 @@
+## Active Director priority — 2026-10-26 visual rework
+
+The Director explicitly supersedes the earlier mechanics-first implementation sequence: V01 environment, V02 sprite assets, V03 chibi presentation, V04 compact mock UI, V05 visual review. The initial procedural visual was REJECTED / REVISE. Current sprite review is not final art approval. Stop new mechanics, repeated unrelated audits and large architecture changes until the Director approves the visual slice. Existing mechanics stay available in main.tscn via F6; visual_village.tscn is the F5 target. See [implemented asset inventory and review](../assets/visual/README.md). Historical roadmap entries below remain history and retained vision, not authorization to bypass this gate.
 # Roadmap
 
 ## Implementation evidence update — 2026-10-26

@@ -1263,3 +1263,7 @@ Game Director telah menyukai konsep gambar desa Nusantara isometrik yang memilik
 *Satriya Village — Art Direction & Visual Production Bible v1.0*
 *Tanggal pembuatan: 26 Oktober 2026*
 *Dokumen ini adalah standar produksi visual. Perubahan memerlukan review Art Director dan persetujuan Game Director.*
+
+## Implemented sprite review checkpoint — 26 October 2026
+
+Director rejected the procedural visual. The current F5 scene uses 16 original AI-generated transparent PNG candidates, with compact conditional UI. The supplied Nusantara village illustration is now available to the chat as architecture/mood reference; the supplied game screenshot is readability reference only, never a source of copied sprites. Art remains REVISE, not approved. See [actual asset inventory, PNG replacement pipeline, remaining assets and verification](../assets/visual/README.md). Prior proposed dimensions remain proposals; the review scene's 40×20 native grid and 640×360 pixel world are provisional implementation choices.

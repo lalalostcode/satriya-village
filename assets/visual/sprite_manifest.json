@@ -1,0 +1,114 @@
+{
+	"bamboo": {
+		"ground_offset": 8,
+		"height": 49,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/bamboo.png",
+		"width": 46
+	},
+	"banana": {
+		"ground_offset": 8,
+		"height": 49,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/banana.png",
+		"width": 48
+	},
+	"bridge": {
+		"ground_offset": 8,
+		"height": 45,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/bridge.png",
+		"width": 66
+	},
+	"citizen": {
+		"ground_offset": 0,
+		"height": 36,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/citizen.png",
+		"width": 18
+	},
+	"farmer": {
+		"ground_offset": 0,
+		"height": 24,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/farmer.png",
+		"width": 20
+	},
+	"fence": {
+		"ground_offset": 8,
+		"height": 29,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/fence.png",
+		"width": 40
+	},
+	"field": {
+		"ground_offset": 8,
+		"height": 46,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/field.png",
+		"width": 76
+	},
+	"flowers": {
+		"ground_offset": 8,
+		"height": 21,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/flowers.png",
+		"width": 28
+	},
+	"gate": {
+		"ground_offset": 8,
+		"height": 62,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/gate.png",
+		"width": 66
+	},
+	"granary": {
+		"ground_offset": 8,
+		"height": 79,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/granary.png",
+		"width": 70
+	},
+	"house": {
+		"ground_offset": 8,
+		"height": 72,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/house.png",
+		"width": 74
+	},
+	"joglo": {
+		"ground_offset": 8,
+		"height": 84,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/joglo.png",
+		"width": 88
+	},
+	"leader": {
+		"ground_offset": 0,
+		"height": 33,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/leader.png",
+		"width": 18
+	},
+	"palm": {
+		"ground_offset": 8,
+		"height": 73,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/palm.png",
+		"width": 62
+	},
+	"pendopo": {
+		"ground_offset": 8,
+		"height": 96,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/pendopo.png",
+		"width": 96
+	},
+	"tree": {
+		"ground_offset": 8,
+		"height": 62,
+		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
+		"texture": "res://assets/visual/sprites/tree.png",
+		"width": 66
+	}
+}

@@ -1,3 +1,14 @@
+# Current F5 target — sprite visual review
+
+26 October 2026: Director rejected the procedural visual prototype. F5 now opens `scenes/visual_village.tscn` with 16 transparent PNG sprite candidates, a compact HUD, hidden detail/build panels, object selection and camera controls. **Visual status: REVISE, awaiting Director review.** All UI data is mock data; this scene does not write saves or run the economy.
+
+Press **F5** in Godot 4.7.2. Use **Bangun**, **Krisis pangan**, click an object, drag, scroll, and **Reset**. **Esc** closes panels; **Space** pauses decorative idle. The preserved mechanics demo is `scenes/main.tscn`: open it and press **F6**.
+
+[Asset inventory, replacement pipeline and manual review](assets/visual/README.md) · [BEFORE](docs/screenshots/visual_before.png) · [AFTER](docs/screenshots/visual_after.png). Sprite art is AI-generated and unapproved; ground tiles and UI borders remain placeholders. Parser/import and 15 focused rendered checks passed; Android and human acceptance of the rework remain untested. No complex mechanics expansion before visual approval.
+
+---
+
+The following describes the preserved **legacy mechanics scene**, not the current F5 visual demo.
 # Satriya Village — Prototype 0.3
 
 Implementasi 26 Oktober 2026: state desa, transaksi stok, definisi bangunan dan clock terpisah dari presentasi. Kamera mendukung drag mouse tengah/roda mouse serta touch tap/drag/pinch. Save/load manual, autosave terpisah, dan pemulihan cadangan tersedia. M2 kini memiliki pekerja agregat: sawah membutuhkan petani untuk menghasilkan pangan. Lihat [kontrak/tes pekerja M2](docs/M2_WORKFORCE_CONTRACT.md), [fondasi M1](docs/M1_FOUNDATION_VERIFICATION.md), dan [kontrak save v2](docs/SAVE_FORMAT.md).
