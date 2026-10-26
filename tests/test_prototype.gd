@@ -28,6 +28,7 @@ func click_at(pos: Vector2) -> void:
 func _run() -> void:
     root.size = Vector2i(1280, 720)
     game = load("res://scenes/main.tscn").instantiate()
+    game.autosave = game.Autosave.new("res://.godot/prototype-tests/auto-" + str(Time.get_ticks_usec()) + ".json")
     root.add_child(game)
     game.set_process(false)
     await process_frame

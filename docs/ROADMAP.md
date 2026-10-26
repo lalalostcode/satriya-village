@@ -1,5 +1,9 @@
 # Roadmap
 
+## Implementation evidence update — 2026-10-26
+
+The Director subsequently authorized implementation and requested the remaining M1 foundations. Grid/placement/state/inventory/clock/camera, versioned manual persistence, touch tap/drag/pinch and separate autosave are now implemented; [M1 verification](M1_FOUNDATION_VERIFICATION.md) records 281 passing desktop assertions and a rendered 1280×720 HUD check. The documentation-only statements below describe the earlier planning checkpoint. M0/M1 human acceptance and Android physical-device evidence remain outstanding; no connected ADB target was found. This update does not ratify pilot/MVP scope or enable all deferred systems.
+
 ## Status and scope gates — 26 October 2026
 
 The sequence M0–M4 is retained. [PRD v1.1](PRD.md) is a revision of v1.0 and remains **DRAFT**. The Director accepted the direction of a one-village vertical slice in principle while retaining the complete Satriya Village vision. Detailed slice manifest O01-S, pilot scope O01-P, and MVP definition O01-M have separate decisions in the [Decision Register](DECISION_REGISTER.md). M3/M4 below describe intended progression, not approved pilot content or dates.

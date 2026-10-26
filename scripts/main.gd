@@ -12,9 +12,16 @@ const Catalog = preload("res://scripts/simulation/building_catalog.gd")
 const Settlement = preload("res://scripts/simulation/settlement_state.gd")
 const Clock = preload("res://scripts/simulation/simulation_clock.gd")
 const SaveStore = preload("res://scripts/persistence/save_store.gd")
+const Autosave = preload("res://scripts/persistence/autosave_controller.gd")
+const Gestures = preload("res://scripts/presentation/world_gestures.gd")
 var settlement := Settlement.new()
 var clock := Clock.new()
 var save_store := SaveStore.new()
+var autosave := Autosave.new()
+var gestures := Gestures.new()
+var blocked_touches: Dictionary = {}
+var app_active: bool = true
+var session_ready: bool = false
 var current_building: String = "Sawah"
 var camera_offset := Vector2.ZERO
 var camera_zoom: float = 1.0
@@ -27,21 +34,32 @@ var status_label: Label
 var resource_label: Label
 var time_label: Label
 var help_label: Label
+var autosave_label: Label
+var autosave_button: Button
+var hud_header: PanelContainer
+var hud_footer: PanelContainer
 
 
 func _ready() -> void:
+    get_tree().auto_accept_quit = false
     _setup_hud()
     _update_hud()
+    autosave.prime(settlement, clock)
+    _update_autosave_controls()
+    session_ready = true
     queue_redraw()
 
 
 func _process(delta: float) -> void:
+    if not app_active:
+        return
     animation_time += delta * clock.speed
     var days: int = clock.advance(delta)
     for i in days:
         settlement.advance_day()
     if days > 0:
         _update_hud()
+    _accept_autosave_result(autosave.advance(delta, settlement, clock))
     queue_redraw()
 
 
@@ -132,6 +150,9 @@ func _is_in_map(cell: Vector2i) -> bool:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+    # UI still receives emulated mouse events; world actions use raw touch only.
+    if event.device == InputEvent.DEVICE_ID_EMULATION or not gestures.touches.is_empty() or not blocked_touches.is_empty():
+        return
     if event is InputEventMouseMotion and panning:
         camera_offset += event.relative
         camera_offset = camera_offset.clamp(Vector2(-600, -300), Vector2(600, 300))
@@ -149,7 +170,11 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     if event.button_index != MOUSE_BUTTON_LEFT or panning:
         return
-    var cell: Vector2i = _screen_to_cell(event.position)
+    _place_at(event.position)
+
+
+func _place_at(position: Vector2) -> void:
+    var cell: Vector2i = _screen_to_cell(position)
     var id: String = Catalog.id_for_name(current_building)
     var result: String = settlement.try_place(id, cell)
     match result:
@@ -168,17 +193,78 @@ func _input(event: InputEvent) -> void:
     # Release must clear a drag even when the pointer ends over a consuming HUD.
     if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_MIDDLE and not event.pressed:
         panning = false
+    if not app_active:
+        return
+    if event is InputEventScreenTouch:
+        if event.pressed and (_over_hud(event.position) or not blocked_touches.is_empty()):
+            blocked_touches[event.index] = true
+            gestures.cancel()
+            return
+        if blocked_touches.has(event.index):
+            blocked_touches.erase(event.index)
+            return
+        if _over_hud(event.position):
+            gestures.cancel()
+            return
+        _apply_gesture(gestures.handle(event))
+    elif event is InputEventScreenDrag:
+        if _over_hud(event.position):
+            gestures.cancel()
+            return
+        _apply_gesture(gestures.handle(event))
+
+
+func _over_hud(position: Vector2) -> bool:
+    return (is_instance_valid(hud_header) and hud_header.get_global_rect().has_point(position)) or (is_instance_valid(hud_footer) and hud_footer.get_global_rect().has_point(position))
+
+
+func _apply_gesture(command: Dictionary) -> void:
+    if command.has("tap"):
+        _place_at(command.tap)
+    if command.has("pan"):
+        camera_offset = (camera_offset + command.pan).clamp(Vector2(-600, -300), Vector2(600, 300))
+    if command.has("zoom"):
+        var anchor: Vector2 = command.anchor
+        var world: Vector2 = (anchor - CAMERA_CENTER - camera_offset) / camera_zoom
+        camera_zoom = clampf(camera_zoom * command.zoom, 0.6, 1.8)
+        camera_offset = (command.target - CAMERA_CENTER - world * camera_zoom).clamp(Vector2(-600, -300), Vector2(600, 300))
+
+
+func _cancel_gestures() -> void:
+    gestures.cancel()
+    blocked_touches.clear()
+    panning = false
 
 
 func _notification(what: int) -> void:
-    if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-        panning = false
+    if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_APPLICATION_PAUSED]:
+        _cancel_gestures()
+        app_active = false
+        if session_ready:
+            _accept_autosave_result(autosave.flush(settlement, clock))
+    elif what in [NOTIFICATION_APPLICATION_FOCUS_IN, NOTIFICATION_APPLICATION_RESUMED]:
+        app_active = true
+    elif what == NOTIFICATION_WM_CLOSE_REQUEST and session_ready:
+        if _save_before_close():
+            get_tree().quit()
+
+
+func _save_before_close() -> bool:
+    _cancel_gestures()
+    var result: Dictionary = autosave.flush(settlement, clock)
+    _accept_autosave_result(result)
+    if not result.is_empty() and not result.ok:
+        app_active = true
+        status_label.text = "Autosave gagal. Game tetap terbuka; coba Simpan atau nonaktifkan autosave untuk keluar."
+        return false
+    return true
 
 
 func _setup_hud() -> void:
     var layer := CanvasLayer.new()
     add_child(layer)
     var header := PanelContainer.new()
+    hud_header = header
     header.position = Vector2(20, 16)
     header.size = Vector2(1240, 67)
     layer.add_child(header)
@@ -199,11 +285,12 @@ func _setup_hud() -> void:
     top.add_child(time_label)
 
     var footer := PanelContainer.new()
-    footer.position = Vector2(20, 585)
-    footer.size = Vector2(1240, 116)
+    hud_footer = footer
+    footer.position = Vector2(20, 536)
+    footer.size = Vector2(1240, 168)
     layer.add_child(footer)
     var vertical := VBoxContainer.new()
-    vertical.add_theme_constant_override("separation", 7)
+    vertical.add_theme_constant_override("separation", 5)
     footer.add_child(vertical)
     var controls := HBoxContainer.new()
     controls.add_theme_constant_override("separation", 12)
@@ -215,6 +302,7 @@ func _setup_hud() -> void:
     for id: String in Catalog.DEFINITIONS:
         var kind: String = Catalog.DEFINITIONS[id].name
         var build_button := Button.new()
+        build_button.custom_minimum_size = Vector2(44, 44)
         build_button.text = "%s (%d kayu)" % [kind, Catalog.DEFINITIONS[id].wood]
         build_button.pressed.connect(_select_building.bind(kind))
         controls.add_child(build_button)
@@ -224,17 +312,31 @@ func _setup_hud() -> void:
     controls.add_child(spacer)
     for entry in [["Pause", 0.0], ["1x", 1.0], ["2x", 2.0], ["3x", 3.0]]:
         var speed_button := Button.new()
+        speed_button.custom_minimum_size = Vector2(44, 44)
         speed_button.text = entry[0]
         speed_button.pressed.connect(_set_speed.bind(entry[1]))
         controls.add_child(speed_button)
 
-    for entry in [["Simpan", _save_game], ["Muat", _load_game.bind(false)], ["Cadangan", _load_game.bind(true)]]:
+    var files := HBoxContainer.new()
+    files.add_theme_constant_override("separation", 10)
+    vertical.add_child(files)
+    for entry in [["Simpan", _save_game], ["Muat", _load_game.bind(false)], ["Cadangan", _load_game.bind(true)], ["Muat Otomatis", _load_autosave.bind(false)], ["Cadangan Otomatis", _load_autosave.bind(true)]]:
         var button := Button.new()
+        button.custom_minimum_size = Vector2(44, 44)
         button.text = entry[0]
         button.add_to_group("persistence_controls")
         button.pressed.connect(entry[1])
         button.tooltip_text = "Simpan desa saat ini" if entry[0] == "Simpan" else "Ganti sesi aktif dengan snapshot tersimpan"
-        controls.add_child(button)
+        files.add_child(button)
+    autosave_button = Button.new()
+    autosave_button.custom_minimum_size = Vector2(44, 44)
+    autosave_button.add_to_group("persistence_controls")
+    autosave_button.pressed.connect(_toggle_autosave)
+    autosave_button.tooltip_text = "Mengaktifkan autosave akan memperbarui slot otomatis dengan sesi ini setiap 60 detik bila ada perubahan."
+    files.add_child(autosave_button)
+    autosave_label = Label.new()
+    autosave_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    files.add_child(autosave_label)
 
     help_label = Label.new()
     vertical.add_child(help_label)
@@ -267,16 +369,53 @@ func _load_game(backup: bool = false) -> void:
         if not backup and save_store.load_game(true).ok:
             status_label.text += " Klik Cadangan untuk pemulihan."
         return
+    _apply_loaded(result)
+    status_label.text = "Cadangan dimuat." if backup else "Desa dimuat."
+
+
+func _apply_loaded(result: Dictionary) -> void:
     # Swap only after the entire snapshot has been parsed and validated.
     settlement = result.settlement
     clock = result.clock
-    panning = false
+    _cancel_gestures()
     camera_offset = Vector2.ZERO
     camera_zoom = 1.0
     animation_time = 0.0
-    status_label.text = "Cadangan dimuat." if backup else "Desa dimuat."
     _update_hud()
     queue_redraw()
+
+
+func _load_autosave(backup: bool = false) -> void:
+    var result: Dictionary = autosave.store.load_game(backup)
+    if not result.ok:
+        status_label.text = _save_error_message(result.error, false)
+        if not backup and autosave.store.load_game(true).ok:
+            status_label.text += " Klik Cadangan Otomatis."
+        return
+    _apply_loaded(result)
+    autosave.enabled = true
+    autosave.prime(settlement, clock)
+    _update_autosave_controls()
+    status_label.text = "Cadangan otomatis dimuat." if backup else "Simpanan otomatis dimuat."
+
+
+func _toggle_autosave() -> void:
+    autosave.enabled = not autosave.enabled
+    autosave.elapsed = 0.0
+    _update_autosave_controls()
+
+
+func _update_autosave_controls() -> void:
+    autosave_button.text = "Autosave: Aktif" if autosave.enabled else "Autosave: Mati"
+    autosave_label.text = "Otomatis tiap 60 dtk" if autosave.enabled else "Slot otomatis dilindungi"
+
+
+func _accept_autosave_result(result: Dictionary) -> void:
+    if result.is_empty():
+        return
+    autosave_label.text = "Otomatis tersimpan" if result.ok else "Autosave gagal; coba lagi 60 dtk"
+    if not result.ok:
+        status_label.text = _save_error_message(result.error, true)
 
 
 func _save_error_message(reason: String, writing: bool) -> String:
@@ -295,4 +434,4 @@ func _update_hud() -> void:
     if time_label != null:
         time_label.text = "Hari %d  |  %sx" % [clock.day, str(int(clock.speed))]
     if help_label != null:
-        help_label.text = "Dipilih: %s  |  Klik petak kosong | Geser: mouse tengah | Zoom: roda mouse | 1 hari = 8 detik (1x)" % current_building
+        help_label.text = "Dipilih: %s | Tap/klik: bangun | Geser jari/mouse tengah: kamera | Cubit/roda: zoom | 1 hari = 8 detik (1x)" % current_building

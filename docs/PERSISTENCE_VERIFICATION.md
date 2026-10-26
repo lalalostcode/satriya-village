@@ -1,5 +1,7 @@
 # Manual save/load verification — 2026-10-26
 
+Follow-up: separate autosave and touch/lifecycle support were implemented after this manual-slot checkpoint. See [latest M1 results](M1_FOUNDATION_VERIFICATION.md) and the autosave extension in [SAVE_FORMAT](SAVE_FORMAT.md); the limitations below describe the original manual-save task.
+
 Implemented one manual JSON slot and previous-good backup. Full schema, paths, numeric validation and replacement policy are in [SAVE_FORMAT](SAVE_FORMAT.md). Save captures the existing settlement and simulation clock between transactions; load builds a separate validated model before swapping the active session. No offline progress is applied.
 
 ## Actual results

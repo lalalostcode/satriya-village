@@ -183,6 +183,7 @@ func test_ui() -> bool:
     root.size = Vector2i(1280, 720)
     game = load("res://scenes/main.tscn").instantiate()
     game.save_store = Store.new(directory + "/ui.json")
+    game.autosave = game.Autosave.new(directory + "/ui-auto.json")
     root.add_child(game)
     game.set_process(false)
     game.clock.set_speed(0.0)

@@ -15,6 +15,14 @@ This section supersedes the broader proposal below for the current three-buildin
 
 ## Earlier broader proposal (historical, not implemented in full)
 
+## M1 autosave extension — 2026-10-26
+
+The Director requested all remaining M1 foundation work. Manual schema/content remains v1 / prototype-1: this extension adds storage policy, not payload fields. Autosave uses `user://saves/village-autosave.json` and its own `.bak`, `.tmp`, `.bak.tmp` and rejected files through the same validated store; it never writes the manual slot. Every 60 seconds of active application time (unscaled by simulation speed), save only if domain state/clock differs from the last successful autosave baseline. Explicit paused commands can therefore be autosaved; unchanged paused state does not churn backups. Failure retains dirty state and retries after the next interval, without per-frame disk writes. Background/focus loss attempts one dirty autosave and suspends automatic simulation/intervals until foreground; no offline catch-up. Snapshot capture occurs after complete commands/ticks.
+
+If an autosave or its backup already exists on startup, automatic writes start disabled. The HUD offers Muat Otomatis/Cadangan Otomatis and an explicit Autosave toggle whose tooltip explains enabling for a new session. Successful autosave load enables future autosaves and resets the comparison baseline/timer. Failed load changes neither live state nor that protection. An entirely new slot starts enabled. A manual load does not silently unlock protected prior-session autosaves. Simultaneous game instances remain unsupported. These desktop notifications are tested by injection; actual Android suspend/resume/device storage still require physical-device testing.
+
+Normal window close also flushes dirty enabled autosaves. If this save fails, the window remains open with a retry message; the player may manually save or explicitly disable autosave before closing. Force-kill/crash has no close notification and only previously successful snapshots are recoverable. Unchanged/protected/disabled autosaves cause no write on close.
+
 Tanggal: 26 Oktober 2026. **DRAFT / PROPOSED — belum disahkan dan belum diimplementasikan.** Sumber: [PRD FR06/O09](PRD.md), [TDD](TDD.md), [Decision Register](DECISION_REGISTER.md). Dokumen ini memenuhi persiapan spesifikasi sebelum persistence; keberadaannya tidak menyatakan save/load sudah ada.
 
 ## 1. Format, lokasi dan ownership
