@@ -1,5 +1,13 @@
 # Approved Design Direction — Satriya Village
 
+## Ratification and document status — 26 October 2026
+
+This file preserves the approved vision baseline. The [Decision Register](DECISION_REGISTER.md) records subsequent explicit decisions, acceptance in principle, proposals, open questions, and source conflicts. [PRD v1.1](PRD.md) remains **DRAFT**, with direction accepted in principle; pilot/MVP scope and implementation are not approved by that acceptance. A02 gameplay audit remains **NOT TESTED**.
+
+The Director explicitly confirmed that pause stops automatic simulation while allowing valid explicit player commands, and that ordinary citizens use an aggregate economy while important characters are simulated individually. Unresolved economy recovery mechanics, balancing, calendars, and performance numbers stay PROPOSED/OPEN. The complete vision below remains in the [roadmap](ROADMAP.md); future-feature approval is not a release commitment.
+
+The six attribute names below remain the repository baseline. Their status differs from the handoff, which treats the names as proposed; that conflict is recorded under O08 in the Decision Register and has not been silently ratified by the v1.1 review.
+
 ## Premise
 - First scenario: a custom village chief starting in a fictional Malang-area settlement around the political crisis of Tumapel in the early thirteenth century.
 - Ken Dedes / Ken Arok / Kadiri are historical-literary inspiration, with sources and creative invention distinguished in narrative docs.

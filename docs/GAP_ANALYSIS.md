@@ -2,6 +2,8 @@
 
 Tanggal: 26 Oktober 2026. Status: **DRAFT UNTUK REVIEW GAME DIRECTOR**. Tidak mengotorisasi implementasi.
 
+Pembaruan v1.1: tabel analisis awal di bawah dipertahankan sebagai catatan sebelum review. Director kemudian menerima arah A01/A03–A08 secara prinsip dengan batas yang dicatat pada [Decision Register](DECISION_REGISTER.md). Pause dengan command eksplisit dan batas ekonomi agregat/individual kini confirmed; bukan semua detail planning. Lihat pembaruan di akhir dokumen dan [PRD v1.1](PRD.md) untuk status terkini. A02 tetap **NOT TESTED**.
+
 ## 1. Kesimpulan arsitektur dan produk
 
 Visi sudah jelas, tetapi kontrak produk yang dapat diuji belum lengkap. Kendala utama adalah cakupan gabungan simulasi ekonomi, karakter, politik, perang, dan narasi untuk satu pengembang pemula. Prioritas yang direkomendasikan: buktikan satu loop desa dengan konsekuensi pilihan yang dapat dipahami, kemudian perluas melalui gate. Belum ada dasar untuk menjanjikan tanggal rilis, kapasitas Android, atau keberhasilan prototype.
@@ -67,3 +69,20 @@ Prioritas: **B0** sebelum scope/implementasi disahkan; **B1** sebelum fitur terk
 5. Implementasi hanya setelah PRD/scope disetujui. Tahan ekspansi sampai gate slice tercapai.
 
 Tidak ada angka durasi produksi yang dapat dipertanggungjawabkan sebelum kapasitas pengembang dan hasil audit tersedia. Riset sejarah dan kebijakan masih pekerjaan terbuka; dokumen ini tidak mengubah klaim yang belum terverifikasi menjadi fakta.
+
+## 6. Pembaruan setelah review Director — 26 Oktober 2026
+
+Sumber persetujuan S11 tercatat di [Decision Register](DECISION_REGISTER.md). Ini pembaruan status atas analisis awal, bukan hasil uji atau penutupan semua gap.
+
+| Gap / audit | Status setelah review | Yang masih diperlukan |
+|---|---|---|
+| C06–C08, G01–G03 / A01 | Satu desa dan arah revisi diterima secara prinsip; PRD tetap DRAFT | O01-S manifest, O02 audiens/bahasa, O03 kapasitas/budget, O04 perangkat/rencana; pilot/MVP belum disetujui |
+| C09, G05 / A03 | Pause menghentikan otomatis dan menerima command eksplisit: CONFIRMED | Kontrak transaksi, kalender/umur, pacing, deadline, time skip/offline tetap OPEN |
+| C13 / A04 | Ekonomi warga biasa agregat, tokoh penting individual: CONFIRMED; blueprint diselaraskan sebagai dokumen | Schema, rumus dan pengaruh perjalanan belum dikunci |
+| G06 / A05 | Arah jalur pemulihan diterima secara prinsip | Mekanik, biaya/yield, rumah/populasi, konsumsi, kondisi kekurangan dan expected fixture belum dipilih |
+| C01–C02, G16 / A06 | Register sumber/status/kewenangan tersedia | Nama atribut O08, nama/kronologi O11 dan keputusan tersisa masih perlu ratifikasi |
+| Pelestarian visi / A07 | Traceability D01–D27 dan DECISIONS ditambahkan di PRD §7 dan roadmap | Gate/desain/tes rinci mengikuti dependensi; fitur deferred tetap dipertahankan |
+| G11–G12 / A08 | Android dini diterima sebagai arah; gate/perangkat dibedakan | O04/O14 dan bukti smoke/performa belum tersedia |
+| C03, G04 / A02 | NOT TESTED | Task card PRD §19 belum dijalankan; tidak ada klaim bug fixed/M0 passed |
+
+Penutupan planning memerlukan keputusan dan spesifikasi yang konsisten. Kelulusan requirement implementasi memerlukan hasil pengujian yang relevan. Keduanya dicatat terpisah dari approval PRD.

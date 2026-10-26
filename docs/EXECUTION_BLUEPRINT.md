@@ -2,6 +2,8 @@
 
 Status: backlog usulan, **belum otorisasi implementasi**. Roadmap resmi tetap [ROADMAP.md](ROADMAP.md). Hasil pekerjaan sekarang hanya paket dokumentasi.
 
+Catatan review v1.1: [PRD](PRD.md) tetap DRAFT; [Decision Register](DECISION_REGISTER.md) mencatat penerimaan prinsip dan pertanyaan prioritas O01–O04. Diagram/gate di bawah adalah urutan usulan, bukan approval isi pilot/MVP. Arah Android dini diterima secara prinsip, perangkat/pelaksanaan masih OPEN. A02 gameplay **NOT TESTED**; task card read-only terbaru ada di PRD §19. Kode/refactor belum diotorisasi.
+
 ## Dependency graph dan gate milestone
 
 ```mermaid
@@ -24,7 +26,7 @@ flowchart TD
   M --> N[Hardening dan gate MVP]
 ```
 
-Spike Android awal merupakan rekomendasi tambahan, bukan perubahan ROADMAP otomatis. Offline progression baru sesudah save, ekonomi, lifecycle dan aturan offline disetujui. Siege, intelijen, logistik kompleks dan produksi berkualitas tetap backlog lanjutan.
+Spike Android awal diterima sebagai arah secara prinsip; O04 menetapkan perangkat dan rencana sebelum pelaksanaan. Offline progression baru sesudah save, ekonomi, lifecycle dan aturan offline disetujui. Siege, intelijen, logistik kompleks dan produksi berkualitas tetap visi tertelusur pada PRD §7 dan roadmap, tanpa komitmen scope pilot/MVP.
 
 | Gate | Acceptance criteria | Manual test minimum |
 |---|---|---|

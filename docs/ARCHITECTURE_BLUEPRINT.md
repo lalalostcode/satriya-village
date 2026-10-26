@@ -2,6 +2,8 @@
 
 Status: usulan, bukan struktur yang sudah diimplementasikan. Baca [Master Planning](MASTER_PLANNING.md). Gunakan Godot 4.7.2 Standard + typed GDScript sesuai keputusan proyek; tidak menambah package.
 
+Pembaruan dokumentasi v1.1: [Decision Register](DECISION_REGISTER.md) mencatat dua aturan confirmed dari Director, yaitu pause dengan command eksplisit dan ekonomi warga biasa agregat/tokoh penting individual. Rincian teknis di bawah tetap proposal; tidak ada approval arsitektur menyeluruh atau otorisasi implementasi. [PRD](PRD.md) masih DRAFT; audit gameplay A02 NOT TESTED.
+
 ## Baseline dan arah migrasi
 
 Saat ini `scenes/main.tscn` hanya mempunyai Node2D yang menjalankan `scripts/main.gd`; HUD dibentuk lewat kode. Jangan mengganti seluruh scene. Setelah audit lolos, ekstrak satu tanggung jawab per tugas: clock → placement/grid → inventori/ekonomi → persistence → pekerja → quest. Setiap ekstraksi mempertahankan perilaku teruji sebelum menambah aturan baru.
@@ -49,23 +51,23 @@ Model tidak menyimpan Node, posisi layar, atau referensi HUD. Kamera dan transfo
 
 | Pemilik | Command / keluaran konseptual | Invariant |
 |---|---|---|
-| Clock | set_speed(0/1/2/3), advance_tick; tick_completed(tick_id) | Pause tidak mengubah state simulasi |
+| Clock | set_speed(0/1/2/3), advance_tick; tick_completed(tick_id) | Pause menghentikan kemajuan otomatis; command eksplisit valid tetap dapat mengubah state tanpa memajukan waktu |
 | Settlement | try_place(definition_id, cell) → success/reason/entity_id | Di luar peta, occupied, atau biaya kurang tidak mengubah stok/peta |
 | Inventory | can_afford(cost), apply_transaction(delta, reason) | Satu transaksi atomik; stok tidak negatif; bilangan bulat |
 | Economy | step(tick_id, assignments) → ledger | Produksi tidak bergantung frame render atau jumlah sprite |
-| Workforce | set_priority(sector), assign_official(character_id, role) | Satu warga tidak bekerja pada dua tempat; jabatan dan anggaran tervalidasi |
+| Workforce | set_priority(sector), assign_official(character_id, role) | Total alokasi kelompok tidak melebihi workforce/slot; tokoh tidak dihitung ganda; jabatan dan anggaran tervalidasi |
 | Narrative | choose(event_instance_id, choice_id) → result | Prasyarat dicek ulang; efek yang sama diterapkan paling sekali |
 | Persistence | save(snapshot), load(path) → validated state/error | Load gagal tidak mengganti sesi aktif |
 | Battle (kelak) | start(snapshot), command(order), resolve() → outcome | Hasil diterapkan sekali ke world state; tidak berjalan offline |
 
-Command diproses berurutan pada batas tick. Perubahan placement dan stok harus selesai sebagai satu operasi sebelum signal diterbitkan; tidak ada listener yang boleh mengulang efek ekonomi. Result gagal memiliki reason stabil untuk UI dan tes. Signal membawa ID dan data ringkas; subscriber tidak menjadi sumber kebenaran kedua.
+Aturan confirmed: command eksplisit yang valid dapat diproses saat pause. Usulan kontrak teknis: command diproses berurutan pada titik transaksi yang aman, termasuk saat tick berhenti; kemajuan simulasi otomatis tetap pada tick. Perubahan placement dan stok selesai sebagai satu operasi sebelum signal diterbitkan; listener tidak mengulang efek ekonomi. Result gagal memiliki reason stabil untuk UI dan tes. Signal membawa ID dan data ringkas; subscriber tidak menjadi sumber kebenaran kedua. Detail antrean/urutan masih perlu TDD.
 
 ## Model data yang perlu disahkan
 
 | Model | Field minimum yang diusulkan |
 |---|---|
 | BuildingDefinition | id stabil, display_name, footprint_cells, cost, recipe_id, worker_slots |
-| BuildingState | entity_id, definition_id, cell_x/y, construction_progress, worker_ids |
+| BuildingState | entity_id, definition_id, cell_x/y, construction_progress, workforce_allocations (jumlah per kelompok), named_assignee_ids; bentuk field masih usulan |
 | SettlementState | id, map_width/height, buildings, stocks, population, assignments |
 | CharacterState | id, name, enam atribut, trait_ids, role_id, relationship values; dynasty_id nanti |
 | RecipeDefinition | id, inputs, outputs, ticks_required; quality ditunda |
@@ -81,7 +83,7 @@ Usulan awal: tick simulasi tetap satu detik game, ekonomi diperbarui pada interv
 
 Urutan usulan: command → assignment → produksi → konsumsi → kebutuhan → evaluasi event → snapshot untuk UI. Urutan dan pembulatan harus terdokumentasi dan diuji; jangan mengubah urutan diam-diam. Seed dan urutan ID stabil diperlukan untuk reproducibility dalam versi yang sama, bukan janji determinisme lintas versi engine.
 
-AI pekerja pertama memakai state sederhana idle/travel/work/rest. Alokasi kerja berdasarkan lowongan dan prioritas stabil, bukan pencarian tiap frame. Produksi mengikuti state pekerja pada tick; animasi berjalan mengikuti model dan tidak menghasilkan barang sendiri. Pathfinding detail baru setelah aturan lokasi kerja diputuskan. Desa yang tidak dilihat kelak menjalankan data tanpa sprite, dengan aturan produksi yang setara.
+Ekonomi warga biasa memakai kelompok/alokasi jumlah; tokoh penting individual. State idle/travel/work/rest dapat menjadi proposal presentasi, bukan kewajiban membuat tiap sprite agen ekonomi penuh. Alokasi mengikuti lowongan/prioritas; produksi mengikuti model agregat, bukan animasi. ID visual/navigasi boleh dipakai tanpa menjadi otoritas hitungan ekonomi. Pengaruh perjalanan/pathfinding terhadap produksi masih OPEN. Desa yang tidak dilihat kelak menjalankan data tanpa sprite dengan aturan produksi yang setara.
 
 Event besar memakai state rumor/tension/warning/intervention/resolved. Simpan deadline, pilihan tertunda, dan effect IDs. Pause dialog keputusan melalui kebijakan clock yang eksplisit. Tidak ada perang, kudeta, atau resolusi cerita utama saat aplikasi ditutup maupun berada di background.
 
