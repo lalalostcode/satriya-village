@@ -1,6 +1,6 @@
 extends Node2D
 ## Settlement presentation and input; simulation lives in scripts/simulation.
-## It intentionally does NOT claim to implement full NPC AI, economy, combat, or saving.
+## It intentionally does NOT claim to implement full NPC AI, economy, or combat.
 
 const GRID_WIDTH: int = 10
 const GRID_HEIGHT: int = 10
@@ -11,8 +11,10 @@ const MAP_ORIGIN: Vector2 = Vector2(640, 132)
 const Catalog = preload("res://scripts/simulation/building_catalog.gd")
 const Settlement = preload("res://scripts/simulation/settlement_state.gd")
 const Clock = preload("res://scripts/simulation/simulation_clock.gd")
+const SaveStore = preload("res://scripts/persistence/save_store.gd")
 var settlement := Settlement.new()
 var clock := Clock.new()
+var save_store := SaveStore.new()
 var current_building: String = "Sawah"
 var camera_offset := Vector2.ZERO
 var camera_zoom: float = 1.0
@@ -226,6 +228,14 @@ func _setup_hud() -> void:
         speed_button.pressed.connect(_set_speed.bind(entry[1]))
         controls.add_child(speed_button)
 
+    for entry in [["Simpan", _save_game], ["Muat", _load_game.bind(false)], ["Cadangan", _load_game.bind(true)]]:
+        var button := Button.new()
+        button.text = entry[0]
+        button.add_to_group("persistence_controls")
+        button.pressed.connect(entry[1])
+        button.tooltip_text = "Simpan desa saat ini" if entry[0] == "Simpan" else "Ganti sesi aktif dengan snapshot tersimpan"
+        controls.add_child(button)
+
     help_label = Label.new()
     vertical.add_child(help_label)
     status_label = Label.new()
@@ -243,6 +253,40 @@ func _set_speed(value: float) -> void:
     clock.set_speed(value)
     status_label.text = "Waktu dijeda." if clock.speed == 0.0 else "Kecepatan waktu: %sx." % str(int(clock.speed))
     _update_hud()
+
+
+func _save_game() -> void:
+    var result: Dictionary = save_store.save_game(settlement, clock)
+    status_label.text = "Desa tersimpan." if result.ok else _save_error_message(result.error, true)
+
+
+func _load_game(backup: bool = false) -> void:
+    var result: Dictionary = save_store.load_game(backup)
+    if not result.ok:
+        status_label.text = _save_error_message(result.error, false)
+        if not backup and save_store.load_game(true).ok:
+            status_label.text += " Klik Cadangan untuk pemulihan."
+        return
+    # Swap only after the entire snapshot has been parsed and validated.
+    settlement = result.settlement
+    clock = result.clock
+    panning = false
+    camera_offset = Vector2.ZERO
+    camera_zoom = 1.0
+    animation_time = 0.0
+    status_label.text = "Cadangan dimuat." if backup else "Desa dimuat."
+    _update_hud()
+    queue_redraw()
+
+
+func _save_error_message(reason: String, writing: bool) -> String:
+    if reason == "missing":
+        return "Belum ada simpanan ini. Desa aktif tetap tersedia."
+    if reason in ["version", "content", "fields", "protected_save"]:
+        return "Format simpanan berbeda. Gunakan versi game yang sesuai; desa aktif tetap tersedia."
+    if writing:
+        return "Simpan gagal. Periksa ruang penyimpanan dan izin folder, lalu coba lagi."
+    return "Simpanan tidak dapat dibaca. Desa aktif tidak berubah."
 
 
 func _update_hud() -> void:

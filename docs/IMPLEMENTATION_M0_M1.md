@@ -1,5 +1,7 @@
 # M0 audit and M1 foundation — 2026-10-26
 
+Follow-up: manual save/load and backup recovery were subsequently implemented and verified; see [persistence results](PERSISTENCE_VERIFICATION.md) and the current [save contract](SAVE_FORMAT.md). Statements about missing persistence below describe the earlier foundation checkpoint.
+
 The Director's current instruction authorizes prototype fixes and incremental M1 foundations. Earlier documentation-only restrictions describe earlier tasks; this does not ratify the entire PRD or future gameplay proposals. Existing planning edits from another task were left untouched.
 
 ## Observed baseline and fixes
