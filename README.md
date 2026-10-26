@@ -1,6 +1,10 @@
-# Satriya Village — Starter Project 0.1
+# Satriya Village — Prototype 0.2
+
+Implementasi 26 Oktober 2026: state desa, transaksi stok, definisi bangunan dan clock terpisah dari presentasi; kamera memakai drag mouse tengah dan roda mouse. Aturan ekonomi starter tetap baseline pengujian. Lihat [hasil audit, kontrak minimum, dan langkah tes](docs/IMPLEMENTATION_M0_M1.md). Save/load dan kontrol touch belum tersedia.
 
 Prototipe **belajar Godot + Codex** untuk Windows; bukan permainan lengkap atau build Play Store.
+
+**Status verifikasi:** audit gameplay M0/A02 **NOT TESTED**; langkah di bawah adalah cara mencoba prototype, bukan bukti fitur telah lolos. Perencanaan memakai baseline provisional reviewer (CONDITIONAL PASS), tanpa approval otomatis scope pilot/MVP. Mulai dokumentasi dari [Peta Dokumen](docs/DOCUMENT_INDEX.md), [PRD](docs/PRD.md) dan [Decision Register](docs/DECISION_REGISTER.md). [M0 Audit Plan](docs/M0_AUDIT_PLAN.md) menjelaskan bukti F5 yang masih diperlukan.
 
 ## Menjalankan (Windows)
 

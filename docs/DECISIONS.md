@@ -8,6 +8,10 @@ The Director explicitly confirmed that pause stops automatic simulation while al
 
 The six attribute names below remain the repository baseline. Their status differs from the handoff, which treats the names as proposed; that conflict is recorded under O08 in the Decision Register and has not been silently ratified by the v1.1 review.
 
+## Reviewer baseline for planning — S12
+
+The subsequent reviewer CONDITIONAL PASS is adopted as **PLANNING_BASELINE**, not explicit Director approval of scope or numbers. Use a one-village slice with simple wood collection, safe save/load, mouse/touch, one food quest with at least two outcomes, one named official, and a visible player character with one small interaction (FR19). Use provisional 13+, Indonesian, non-graphic content and gradual onboarding; this is not a store age rating. Budget-minimal is an operating assumption; work hours, nominal budget, PC and device specs remain TBD, not Rp0 or a promised release date. Android smoke follows stable basic input/gameplay; test device and minimum supported remain distinct. [GDD](MASTER_GDD.md), [TDD](TDD.md), [Execution Plan](AI_AGENT_EXECUTION_PLAN.md) and [Quality Gates](QUALITY_GATES.md) are drafts. All vision below stays retained; pilot/MVP scope and engineering gates remain separate.
+
 ## Premise
 - First scenario: a custom village chief starting in a fictional Malang-area settlement around the political crisis of Tumapel in the early thirteenth century.
 - Ken Dedes / Ken Arok / Kadiri are historical-literary inspiration, with sources and creative invention distinguished in narrative docs.

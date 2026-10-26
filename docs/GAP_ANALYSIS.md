@@ -4,6 +4,8 @@ Tanggal: 26 Oktober 2026. Status: **DRAFT UNTUK REVIEW GAME DIRECTOR**. Tidak me
 
 Pembaruan v1.1: tabel analisis awal di bawah dipertahankan sebagai catatan sebelum review. Director kemudian menerima arah A01/A03–A08 secara prinsip dengan batas yang dicatat pada [Decision Register](DECISION_REGISTER.md). Pause dengan command eksplisit dan batas ekonomi agregat/individual kini confirmed; bukan semua detail planning. Lihat pembaruan di akhir dokumen dan [PRD v1.1](PRD.md) untuk status terkini. A02 tetap **NOT TESTED**.
 
+Pembaruan editorial S12: CONDITIONAL PASS reviewer menjadi baseline provisional untuk manifest slice/13+/Indonesia/non-grafis/Android-first; bukan approval eksplisit Director. [GDD](MASTER_GDD.md), [TDD](TDD.md), [SAVE_FORMAT](SAVE_FORMAT.md), [Execution Plan](AI_AGENT_EXECUTION_PLAN.md), [Quality Gates](QUALITY_GATES.md) dan [M0 Audit Plan](M0_AUDIT_PLAN.md) kini draft. Data operasional/perangkat TBD tidak memblokir penulisan dokumen.
+
 ## 1. Kesimpulan arsitektur dan produk
 
 Visi sudah jelas, tetapi kontrak produk yang dapat diuji belum lengkap. Kendala utama adalah cakupan gabungan simulasi ekonomi, karakter, politik, perang, dan narasi untuk satu pengembang pemula. Prioritas yang direkomendasikan: buktikan satu loop desa dengan konsekuensi pilihan yang dapat dipahami, kemudian perluas melalui gate. Belum ada dasar untuk menjanjikan tanggal rilis, kapasitas Android, atau keberhasilan prototype.
@@ -86,3 +88,14 @@ Sumber persetujuan S11 tercatat di [Decision Register](DECISION_REGISTER.md). In
 | C03, G04 / A02 | NOT TESTED | Task card PRD §19 belum dijalankan; tidak ada klaim bug fixed/M0 passed |
 
 Penutupan planning memerlukan keputusan dan spesifikasi yang konsisten. Kelulusan requirement implementasi memerlukan hasil pengujian yang relevan. Keduanya dicatat terpisah dari approval PRD.
+
+## 7. Editorial review S12 — baseline provisional
+
+- O01-S: manifest reviewer dipakai untuk GDD termasuk pengumpulan kayu sederhana, save/load, mouse/touch dan karakter pemain visual/interaksi FR19; bukan ratifikasi scope Director. Pilot/MVP tetap OPEN/deferred.
+- O02: target desain 13+/Bahasa Indonesia/non-grafis/onboarding bertahap; bukan rating toko atau approval eksplisit Director atas usia.
+- O03: asumsi budget-minimal/solo/Codex; jam, budget nominal, PC dan tanggal TBD. Estimasi menunggu kapasitas nyata, bukan deadline fiktif atau biaya Rp0.
+- O04: smoke sesudah input/gameplay dasar stabil; model/RAM/OS/GPU/ketersediaan perangkat TBD; test device dipisahkan dari minimum supported; FPS perlu profil.
+- FR19: satu marker/sprite pemain dan dialog bersama; tidak mengaktifkan locomotion, editor avatar atau dinasti kompleks. Acceptance mouse/touch/pause/save tetap NOT TESTED.
+- Draft kontrak/gates tersedia, tetapi O06/O07/O09 dan fixture relevan harus siap sebelum implementasi. A02 tetap NOT TESTED; rencana audit belum laporan runtime.
+
+Snapshot source awal tidak disamakan dengan working tree yang dapat berubah dari task lain. Audit wajib mencatat commit+diff aktual dan meninjau ulang expected sebelum eksekusi; commit dokumentasi tidak menerima atau menguji perubahan source tersebut.

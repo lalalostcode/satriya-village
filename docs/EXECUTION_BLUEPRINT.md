@@ -4,6 +4,8 @@ Status: backlog usulan, **belum otorisasi implementasi**. Roadmap resmi tetap [R
 
 Catatan review v1.1: [PRD](PRD.md) tetap DRAFT; [Decision Register](DECISION_REGISTER.md) mencatat penerimaan prinsip dan pertanyaan prioritas O01–O04. Diagram/gate di bawah adalah urutan usulan, bukan approval isi pilot/MVP. Arah Android dini diterima secara prinsip, perangkat/pelaksanaan masih OPEN. A02 gameplay **NOT TESTED**; task card read-only terbaru ada di PRD §19. Kode/refactor belum diotorisasi.
 
+Pembaruan editorial S12: rekomendasi menjadi PLANNING_BASELINE untuk dokumentasi, termasuk FR19 avatar/interaksi serta target desain 13+/Indonesia/non-grafis. Jam/budget/perangkat TBD membatasi estimasi/tes terkait, bukan seluruh dokumen. [Execution Plan](AI_AGENT_EXECUTION_PLAN.md) dan [Quality Gates](QUALITY_GATES.md) kini merinci aktivasi task; [M0 Audit Plan](M0_AUDIT_PLAN.md) adalah rencana audit, bukan hasil. Baseline audit/stabilitas dan kontrak harus siap sebelum fitur baru.
+
 ## Dependency graph dan gate milestone
 
 ```mermaid

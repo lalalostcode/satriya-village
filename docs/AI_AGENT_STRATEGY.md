@@ -2,6 +2,8 @@
 
 Status: rancangan organisasi kerja. Peran adalah spesialisasi logis, bukan delapan agent yang otomatis berjalan. [AGENTS.md](../AGENTS.md) tetap instruksi otoritatif. Paket ini tidak memasang skill atau mengubah instruksi agent global.
 
+Rencana task terkini ada di [AI Agent Execution Plan](AI_AGENT_EXECUTION_PLAN.md), dengan [GDD](MASTER_GDD.md), [TDD](TDD.md), [Quality Gates](QUALITY_GATES.md) dan [M0 Audit Plan](M0_AUDIT_PLAN.md). Baseline reviewer S12 pada [Decision Register](DECISION_REGISTER.md) bersifat provisional; audit/stabilisasi baseline dan kontrak terkait siap sebelum fitur. Peran di bawah tidak mengaktifkan agent/implementasi otomatis.
+
 ## Organisasi dan kewenangan
 
 | Peran | Kapan aktif | Kepemilikan dan batas |

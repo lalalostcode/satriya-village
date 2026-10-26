@@ -2,6 +2,8 @@
 
 Tanggal: 26 Oktober 2026. Bahasa kerja: Indonesia. Status: **proposal pra-produksi**, bukan persetujuan implementasi.
 
+Catatan editorial S12: dokumen ini menyimpan proposal awal. Status terkini ada di [PRD](PRD.md)/[Decision Register](DECISION_REGISTER.md); reviewer CONDITIONAL PASS menjadi baseline provisional, bukan approval scope/angka. Spesifikasi slice kini tersedia sebagai draft [Master GDD](MASTER_GDD.md), [TDD](TDD.md), [SAVE_FORMAT](SAVE_FORMAT.md), [Execution Plan](AI_AGENT_EXECUTION_PLAN.md), [Quality Gates](QUALITY_GATES.md) dan [M0 Audit Plan](M0_AUDIT_PLAN.md). A02 NOT TESTED; pilot/MVP belum disetujui. Data jam/budget/perangkat TBD tidak menghentikan dokumentasi.
+
 ## 1. Mandat dan hierarki keputusan
 
 Dokumen ini menyintesis Master Project Brief — Pre-Production v0.1 yang diberikan pemilik. Tujuan pekerjaan sekarang adalah menyusun rencana, bukan membuat gameplay. `AGENTS.md` dan [DECISIONS.md](DECISIONS.md) tetap menjadi batas kerja; [ROADMAP.md](ROADMAP.md) tetap roadmap yang berlaku. Perubahan lingkup, arsitektur besar, dan gameplay di bawah ini memerlukan keputusan Game Director sebelum dikerjakan.
@@ -12,7 +14,7 @@ Label yang digunakan: **disepakati** untuk visi dalam DECISIONS; **usulan** untu
 
 ## 2. Inti pengalaman dan kelayakan
 
-Pemain menjadi kepala Tirta Wening, memahami kebutuhan warga, membangun ekonomi, memilih respons terhadap tekanan sosial, lalu melihat akibatnya. Identitas yang harus hadir sejak slice: desa isometrik yang mudah dibaca, karakter bernama yang dapat diajak berinteraksi, kebutuhan pangan yang jelas, dan satu pilihan dengan akibat yang terlihat. Nuansa Nusantara hadir melalui lingkungan dan cerita orisinal yang diteliti, bukan banyaknya sistem.
+Pemain menjadi kepala desa fiksi kawasan Malang (Tirta Wening masih nama usulan), memahami kebutuhan warga, membangun ekonomi, memilih respons terhadap tekanan sosial, lalu melihat akibatnya. Identitas slice meliputi desa isometrik terbaca, karakter pemain visual/interaksi sederhana, pejabat bernama, kebutuhan pangan jelas dan pilihan dengan akibat terlihat. Nuansa Nusantara hadir melalui lingkungan dan cerita orisinal yang diteliti.
 
 Core loop usulan: amati persediaan/kebutuhan → tentukan prioritas → bangun dan alokasikan pekerja → jalankan waktu → lihat hasil produksi dan konsumsi → berbicara dengan tokoh/menjawab event → sesuaikan rencana. Loop pilot memperluasnya dengan hubungan antardesa, risiko konflik, dan pewarisan kepemimpinan.
 
@@ -72,7 +74,7 @@ Balancing dimulai dari ledger: stok akhir = stok awal + produksi + impor − kon
 
 ## 6. Rencana dokumentasi berurutan
 
-Paket ini menetapkan struktur dahulu. Dokumen di bawah **belum ditulis** kecuali paket fondasi yang ditautkan di awal. Jangan membuat semua spesifikasi sekaligus sebelum baseline dan batas lingkup disetujui.
+Tabel berikut adalah urutan rencana awal, bukan inventaris status terkini. GDD/TDD/save/execution/gates/audit plan kini tersedia sebagai draft melalui tautan di awal; modul kontrak/data minimum berada di TDD, ekonomi/quest awal di GDD. Lihat [Document Index](DOCUMENT_INDEX.md) untuk berkas yang benar-benar ada. Laporan runtime, riset lore, balancing final dan release checks belum tersedia. Dokumen provisional boleh disusun sambil data TBD ditunggu; fitur baru tetap menunggu audit dan kontrak siap.
 
 | Urutan / dokumen rencana | Isi dan keluaran | Bergantung pada / penanggung jawab |
 |---|---|---|

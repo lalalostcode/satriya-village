@@ -1,5 +1,5 @@
 extends Node2D
-## Visual prototype only: isometric tiles, basic building placement, and time/resource HUD.
+## Settlement presentation and input; simulation lives in scripts/simulation.
 ## It intentionally does NOT claim to implement full NPC AI, economy, combat, or saving.
 
 const GRID_WIDTH: int = 10
@@ -7,27 +7,18 @@ const GRID_HEIGHT: int = 10
 const TILE_HALF_WIDTH: float = 40.0
 const TILE_HALF_HEIGHT: float = 20.0
 const MAP_ORIGIN: Vector2 = Vector2(640, 132)
-const SECONDS_PER_DAY: float = 8.0
 
-const BUILD_COST: Dictionary = {
-    "Rumah": 30,
-    "Sawah": 20,
-    "Lumbung": 45,
-}
-
-var buildings: Dictionary = {
-    Vector2i(4, 4): "Rumah",
-    Vector2i(3, 4): "Sawah",
-    Vector2i(4, 5): "Sawah",
-}
+const Catalog = preload("res://scripts/simulation/building_catalog.gd")
+const Settlement = preload("res://scripts/simulation/settlement_state.gd")
+const Clock = preload("res://scripts/simulation/simulation_clock.gd")
+var settlement := Settlement.new()
+var clock := Clock.new()
 var current_building: String = "Sawah"
-var wood: int = 120
-var food: int = 60
-var coins: int = 150
-var population: int = 8
-var day: int = 1
-var speed: float = 1.0
-var elapsed: float = 0.0
+var camera_offset := Vector2.ZERO
+var camera_zoom: float = 1.0
+var panning: bool = false
+const CAMERA_CENTER := Vector2(640, 340)
+
 var animation_time: float = 0.0
 
 var status_label: Label
@@ -43,24 +34,13 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-    animation_time += delta
-    elapsed += delta * speed
-    while elapsed >= SECONDS_PER_DAY:
-        elapsed -= SECONDS_PER_DAY
-        _advance_day()
+    animation_time += delta * clock.speed
+    var days: int = clock.advance(delta)
+    for i in days:
+        settlement.advance_day()
+    if days > 0:
+        _update_hud()
     queue_redraw()
-
-
-func _advance_day() -> void:
-    day += 1
-    var fields: int = 0
-    for building in buildings.values():
-        if building == "Sawah":
-            fields += 1
-    # Prototype economy: each field produces 5 food, villagers consume 3 total.
-    food += fields * 5 - 3
-    coins += 2
-    _update_hud()
 
 
 func _draw() -> void:
@@ -69,14 +49,20 @@ func _draw() -> void:
     draw_circle(Vector2(165, 160), 72, Color("#91c7a2"))
     draw_circle(Vector2(1100, 410), 95, Color("#91c7a2"))
     draw_circle(Vector2(1180, 205), 45, Color("#9bd5ae"))
+    draw_set_transform(CAMERA_CENTER + camera_offset - CAMERA_CENTER * camera_zoom, 0.0, Vector2.ONE * camera_zoom)
     for y in GRID_HEIGHT:
         for x in GRID_WIDTH:
             var cell := Vector2i(x, y)
             var tile_center := _cell_to_screen(cell)
             var tile_color := Color("#83bf7a") if (x + y) % 2 == 0 else Color("#8cc982")
             _diamond(tile_center, tile_color)
-            if buildings.has(cell):
-                _draw_building(tile_center, buildings[cell])
+    # Draw all ground first so later tiles cannot cover an earlier building.
+    for y in GRID_HEIGHT:
+        for x in GRID_WIDTH:
+            var cell := Vector2i(x, y)
+            var tile_center := _cell_to_screen(cell)
+            if settlement.buildings.has(cell):
+                _draw_building(tile_center, Catalog.DEFINITIONS[settlement.buildings[cell]].name)
     # Decorative villagers are visual-only; no autonomous NPC simulation yet.
     var pos_a := _cell_to_screen(Vector2i(5, 3)) + Vector2(sin(animation_time * 1.5) * 13.0, -8.0)
     var pos_b := _cell_to_screen(Vector2i(2, 6)) + Vector2(cos(animation_time * 1.1) * 12.0, -5.0)
@@ -132,7 +118,8 @@ func _cell_to_screen(cell: Vector2i) -> Vector2:
 
 
 func _screen_to_cell(pos: Vector2) -> Vector2i:
-    var rel: Vector2 = pos - MAP_ORIGIN
+    var world: Vector2 = (pos - CAMERA_CENTER - camera_offset) / camera_zoom + CAMERA_CENTER
+    var rel: Vector2 = world - MAP_ORIGIN
     var x: float = (rel.x / TILE_HALF_WIDTH + rel.y / TILE_HALF_HEIGHT) / 2.0
     var y: float = (rel.y / TILE_HALF_HEIGHT - rel.x / TILE_HALF_WIDTH) / 2.0
     return Vector2i(roundi(x), roundi(y))
@@ -143,23 +130,47 @@ func _is_in_map(cell: Vector2i) -> bool:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-        var cell: Vector2i = _screen_to_cell(event.position)
-        if not _is_in_map(cell):
-            return
-        if buildings.has(cell):
+    if event is InputEventMouseMotion and panning:
+        camera_offset += event.relative
+        camera_offset = camera_offset.clamp(Vector2(-600, -300), Vector2(600, 300))
+        return
+    if not event is InputEventMouseButton:
+        return
+    if event.button_index == MOUSE_BUTTON_MIDDLE:
+        panning = event.pressed
+        return
+    if not event.pressed:
+        return
+    if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+        var factor: float = 1.1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 / 1.1
+        camera_zoom = clampf(camera_zoom * factor, 0.6, 1.8)
+        return
+    if event.button_index != MOUSE_BUTTON_LEFT or panning:
+        return
+    var cell: Vector2i = _screen_to_cell(event.position)
+    var id: String = Catalog.id_for_name(current_building)
+    var result: String = settlement.try_place(id, cell)
+    match result:
+        "ok":
+            status_label.text = "%s dibangun pada (%d, %d)." % [current_building, cell.x, cell.y]
+        "occupied":
             status_label.text = "Petak terisi. Pilih petak kosong."
-            return
-        var cost: int = BUILD_COST[current_building]
-        if wood < cost:
-            status_label.text = "Kayu kurang! Butuh %d kayu." % cost
-            return
-        wood -= cost
-        buildings[cell] = current_building
-        if current_building == "Rumah":
-            population += 2
-        status_label.text = "%s dibangun pada (%d, %d)." % [current_building, cell.x, cell.y]
-        _update_hud()
+        "insufficient_wood":
+            status_label.text = "Kayu kurang! Butuh %d kayu." % Catalog.DEFINITIONS[id].wood
+        _:
+            status_label.text = "Pilih petak di dalam desa."
+    _update_hud()
+
+
+func _input(event: InputEvent) -> void:
+    # Release must clear a drag even when the pointer ends over a consuming HUD.
+    if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_MIDDLE and not event.pressed:
+        panning = false
+
+
+func _notification(what: int) -> void:
+    if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+        panning = false
 
 
 func _setup_hud() -> void:
@@ -174,7 +185,7 @@ func _setup_hud() -> void:
     header.add_child(top)
 
     var title := Label.new()
-    title.text = "SATRIYA VILLAGE  |  Prototype 0.1"
+    title.text = "SATRIYA VILLAGE  |  Prototype 0.2"
     title.add_theme_font_size_override("font_size", 19)
     top.add_child(title)
     var space := Control.new()
@@ -199,9 +210,10 @@ func _setup_hud() -> void:
     var build_label := Label.new()
     build_label.text = "Bangun:"
     controls.add_child(build_label)
-    for kind in BUILD_COST.keys():
+    for id: String in Catalog.DEFINITIONS:
+        var kind: String = Catalog.DEFINITIONS[id].name
         var build_button := Button.new()
-        build_button.text = "%s (%d kayu)" % [kind, BUILD_COST[kind]]
+        build_button.text = "%s (%d kayu)" % [kind, Catalog.DEFINITIONS[id].wood]
         build_button.pressed.connect(_select_building.bind(kind))
         controls.add_child(build_button)
 
@@ -228,15 +240,15 @@ func _select_building(kind: String) -> void:
 
 
 func _set_speed(value: float) -> void:
-    speed = value
-    status_label.text = "Waktu dijeda." if speed == 0.0 else "Kecepatan waktu: %sx." % str(int(speed))
+    clock.set_speed(value)
+    status_label.text = "Waktu dijeda." if clock.speed == 0.0 else "Kecepatan waktu: %sx." % str(int(clock.speed))
     _update_hud()
 
 
 func _update_hud() -> void:
     if resource_label != null:
-        resource_label.text = "Kayu: %d   Pangan: %d   Uang: %d   Warga: %d" % [wood, food, coins, population]
+        resource_label.text = "Kayu: %d   Pangan: %d   Uang: %d   Warga: %d" % [settlement.stocks.wood, settlement.stocks.food, settlement.stocks.coins, settlement.population]
     if time_label != null:
-        time_label.text = "Hari %d  |  %sx" % [day, str(int(speed))]
+        time_label.text = "Hari %d  |  %sx" % [clock.day, str(int(clock.speed))]
     if help_label != null:
-        help_label.text = "Dipilih: %s  |  Klik petak kosong untuk membangun  |  1 hari = 8 detik pada 1x" % current_building
+        help_label.text = "Dipilih: %s  |  Klik petak kosong | Geser: mouse tengah | Zoom: roda mouse | 1 hari = 8 detik (1x)" % current_building

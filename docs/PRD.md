@@ -2,9 +2,9 @@
 
 Tanggal: 26 Oktober 2026. Pemilik keputusan: Human Game Director. Penyusun: Principal Game Architect / Product Lead.
 
-**Status: DRAFT — arah revisi diterima secara prinsip; PRD secara keseluruhan belum APPROVED.** Audit gameplay A02: **NOT TESTED**. Pekerjaan saat ini hanya dokumentasi; implementasi dan refactor Godot belum diotorisasi.
+**Status: DRAFT — CONDITIONAL PASS reviewer; baseline perencanaan provisional S12, belum APPROVED Director.** Audit gameplay A02: **NOT TESTED**. Pekerjaan saat ini dokumentasi dan commit dokumentasi; fitur/refactor Godot belum diotorisasi.
 
-Revisi ini memperbarui PRD v1.0 pada berkas yang sama. Struktur §1–17 dan ID FR01–FR18/O01–O15 dipertahankan. Persetujuan Director, batasnya, dan pertanyaan tersisa dicatat dalam [Decision Register](DECISION_REGISTER.md); riwayat revisi tersedia di §18.
+Revisi ini memperbarui PRD v1.0 pada berkas yang sama. Struktur §1–17 dan ID FR01–FR18/O01–O15 dipertahankan; editorial review S12 menambah FR19 untuk representasi/interaksi pemain. Persetujuan Director, rekomendasi reviewer dan batasnya dicatat dalam [Decision Register](DECISION_REGISTER.md); riwayat revisi tersedia di §18. Dokumen pelaksana draft: [Master GDD](MASTER_GDD.md), [TDD](TDD.md), [Execution Plan](AI_AGENT_EXECUTION_PLAN.md), [Quality Gates](QUALITY_GATES.md), [M0 Audit Plan](M0_AUDIT_PLAN.md).
 
 Dokumen pendamping: [Gap Analysis](GAP_ANALYSIS.md). Sumber utama: [handoff](../Satriya_Village_Planning_Handoff_v1.md), [keputusan berlaku](DECISIONS.md), [roadmap](ROADMAP.md), [audit independen](reviews/Satriya_Village_Independent_Audit_2026-10-26.md), dan [instruksi proyek](../AGENTS.md). Blueprint lama tetap proposal pendukung; aturan yang kini dikonfirmasi dicatat secara spesifik, tanpa mengesahkan seluruh blueprint.
 
@@ -12,11 +12,14 @@ Dokumen pendamping: [Gap Analysis](GAP_ANALYSIS.md). Sumber utama: [handoff](../
 
 - **CONFIRMED:** keputusan eksplisit handoff atau baseline DECISIONS/AGENTS. Konfirmasi visi tidak menjamin fitur masuk rilis awal.
 - **PRINCIPLE_ACCEPTED:** arah diterima Director, dengan detail/scope yang masih perlu diputuskan. Bukan persetujuan seluruh requirement atau rilis.
+- **PLANNING_BASELINE:** rekomendasi reviewer S12 diadopsi secara provisional untuk dokumentasi; bukan fakta atau persetujuan eksplisit Director atas angka/scope.
 - **PROPOSED:** rekomendasi PRD, termasuk semua jumlah konten, target angka, pacing, dan batas rilis baru. Belum disetujui.
 - **VERIFY:** memerlukan bukti, riset, atau uji; bukan fakta terverifikasi.
 - **OPEN:** pilihan Game Director yang belum diputuskan. Konflik label sumber dicatat pada Gap Analysis C01–C14.
 
 Hanya Director yang menetapkan persetujuan desain/scope. [Decision Register](DECISION_REGISTER.md) menyimpan sumber, tanggal, batas dan konsekuensi keputusan. Status keputusan dipisahkan dari hasil uji PASS/FAIL/NOT TESTED. Persetujuan prinsip tidak otomatis menutup gap planning, meluluskan M0, atau mengotorisasi coding. Requirement di bawah adalah spesifikasi target; belum menjadi klaim implementasi.
+
+Data yang belum diketahui ditulis TBD. Rekomendasi provisional memungkinkan dokumentasi berjalan; jam kerja/budget/PC/perangkat yang TBD membatasi estimasi atau tes yang membutuhkannya, bukan seluruh penulisan GDD/TDD. DEFERRED menandai visi ditunda, bukan dibatalkan.
 
 ## 2. Ringkasan produk dan masalah pemain
 
@@ -24,7 +27,9 @@ Hanya Director yang menetapkan persetujuan desain/scope. [Decision Register](DEC
 
 **Hipotesis produk — PROPOSED:** pemain yang menyukai membangun desa dan cerita karakter membutuhkan strategi dengan sebab-akibat yang terbaca, keputusan bermakna, serta tugas rutin yang dapat didelegasikan. Kompleksitas sistem tidak boleh menuntut pengelolaan setiap penduduk. Hipotesis ini perlu playtest, bukan klaim riset pasar.
 
-Target audiens terkonfirmasi secara arah: anak/remaja dan pengalaman yang mudah didekati. Rentang umur utama, tingkat kemampuan membaca, bahasa rilis, dan rating konten masih OPEN. Bahasa Indonesia sebagai bahasa prototipe diusulkan; jangan mengasumsikan segmentasi kebijakan anak sudah diselesaikan.
+Visi awal tetap mudah didekati anak/remaja. **PLANNING_BASELINE S12:** target desain utama 13+, bahasa utama prototype Bahasa Indonesia, kekerasan non-grafis, strategi mendalam dengan onboarding bertahap dan UI Android terbaca. Ini target desain provisional, bukan age rating Google Play atau approval eksplisit Director atas usia. Klasifikasi/kebijakan menjelang rilis tetap perlu diverifikasi; tingkat kemampuan membaca dan bahasa rilis berikutnya belum dikunci.
+
+Asumsi operasional S12: solo developer pemula, Codex/agent spesialis logis, budget-minimal dengan tool/aset tersedia atau lisensi jelas. Jam kerja, budget nominal, PC dan tanggal rilis TBD. Jangan menganggap biaya Rp0. Estimasi biaya/kalender menunggu kapasitas nyata; milestone memakai acceptance criteria.
 
 Nilai yang ingin dibuktikan: pemain memahami kebutuhan desa, memilih tindakan, melihat warga dan persediaan merespons, lalu menghadapi pilihan naratif dengan dampak yang terlihat.
 
@@ -43,19 +48,19 @@ Inspirasi Ninja Village/Norland tidak mengizinkan penyalinan aset, kode, dialog,
 
 ## 4. Hasil produk, lapisan scope dan non-goals
 
-**PRINCIPLE_ACCEPTED:** vertical slice boleh dibatasi satu desa. Batas ini tidak menghapus politik, dinasti, perang, ekonomi mendalam, living history atau ekspansi Nusantara. Manifest rinci slice dan angka berikut masih **PROPOSED** melalui O01; scope pilot serta MVP belum disetujui.
+**PRINCIPLE_ACCEPTED S11:** slice boleh satu desa. **PLANNING_BASELINE S12:** manifest slice berikut diadopsi untuk GDD provisional, bukan approval eksplisit Director. Seluruh visi besar tetap ditelusuri; pilot/MVP dan balancing tidak ikut disetujui.
 
 | Lapisan | Tujuan dan isi | Tidak termasuk / gate |
 |---|---|---|
 | Technical foundation | M0–M1: satu desa, input, placement, stok, clock, kamera, save/load | Bukan produk rilis; lulus audit fungsi dan invariant data |
-| Vertical slice | Hasil M1–M2 + spike Android usulan: 1 desa, 3 bangunan inti rumah/sawah/lumbung, 1 cara memulihkan kayu, pekerja otomatis, 1 pejabat bernama yang dapat diajak bicara, 1 quest krisis pangan dengan ≥2 hasil | Sesi evaluasi 10–15 menit; tanpa world map, combat, dinasti berjalan, offline, pasar dinamis atau ads |
+| Vertical slice | Baseline provisional M1–M2: satu desa isometrik; rumah/sawah/lumbung; pengumpulan kayu sederhana; pause/1×/2×/3×; pekerja agregat; satu pejabat/interaksi; quest pangan ≥2 hasil; save/load aman; mouse/Android touch; karakter pemain visual + ≥1 interaksi sederhana | Evaluasi 10–15 menit; tanpa perang, ekonomi penuh, intrik atau dinasti kompleks; world map/offline/ads di luar baseline slice |
 | Pilot | M3–M4: 1 chapter Jawa Timur, desa utama + 1 tetangga, peta ringkas, diplomasi terbatas, 1 battle lapangan, konsekuensi kalah, 1 demonstrasi suksesi sederhana | Durasi chapter dan jumlah quest belum dikunci; tidak menjanjikan seluruh Jawa Timur atau siege penuh |
 | MVP / kandidat rilis minimum | Definisi masih OPEN; usulan v1.0 berupa pilot yang dipoles tetap bahan evaluasi, bukan keputusan produk | Konten, durasi, kondisi akhir dan hubungan MVP dengan pilot membutuhkan keputusan tersendiri |
 | Ekspansi / post-launch kandidat | Banyak settlement, delegasi lintas desa, logistik lanjut, dinasti mendalam, intrik/intelijen, riset hybrid, kualitas barang, siege lengkap, Nusantara | Bukan janji jadwal maupun daftar fitur pasti setelah rilis |
 
-Jalur pemulihan kayu belum menentukan bangunan keempat: produksi sederhana, tindakan pemulihan, atau pilihan lain harus diputuskan pada GDD. Upeti tidak menjadi quest kedua pada slice; dapat menjadi konteks penutup menuju pilot.
+Pengumpulan kayu sederhana menjadi arah baseline reviewer; bentuk aksi, yield, waktu, prasyarat dan konsekuensi tetap O07. GDD mengusulkan memakai workforce tanpa bangunan keempat; detail itu belum approval mekanik. Upeti tidak menjadi quest kedua pada slice; tetap visi lanjutan.
 
-O01 dibagi menjadi O01-S (manifest slice), O01-P (scope pilot), dan O01-M (definisi MVP) tanpa mengganti ID asal. Persetujuan salah satunya tidak mengesahkan yang lain. Sesi 10–15 menit adalah target evaluasi yang diusulkan, bukan durasi campaign. Daftar pengecualian slice pada tabel juga menunggu ratifikasi manifest; visi yang ditunda tetap ditelusuri pada §7 dan [ROADMAP](ROADMAP.md).
+O01 dibagi menjadi O01-S (manifest slice), O01-P (pilot), dan O01-M (MVP). Baseline perencanaan atau persetujuan slice tidak mengesahkan pilot/MVP. Target 10–15 menit adalah evaluasi gameplay, bukan durasi campaign. FR19 memakai satu representasi pemain dan panel interaksi yang sama dengan pejabat; tidak menambah locomotion, editor avatar, combat atau dinasti. Visi deferred tetap §7/[ROADMAP](ROADMAP.md).
 
 Tidak ada multiplayer, backend, analytics, ads SDK, pembayaran, paket eksternal, atau pengumpulan data pada scope kerja ini. Penambahan membutuhkan approval pemilik. Tidak ada penghapusan art/scene atau refactor besar otomatis.
 
@@ -64,7 +69,7 @@ Tidak ada multiplayer, backend, analytics, ads SDK, pembayaran, paket eksternal,
 **PROPOSED loop slice:** amati stok/kebutuhan → pilih prioritas → bangun dan atur tenaga kerja → jalankan/pause waktu → baca hasil → bicara dengan pejabat atau pilih respons quest → sesuaikan ekonomi.
 
 Perjalanan sesi uji:
-1. Masuk desa; melihat pangan, bahan bangunan, penduduk/pekerja, waktu dan bantuan ringkas.
+1. Masuk desa; mengenali karakter pemain dan mencoba interaksi sederhana; melihat pangan, kayu, workforce, waktu dan bantuan ringkas.
 2. Memilih sawah, melihat biaya/preview validitas, menempatkan bangunan, dan memahami perubahan stok.
 3. Mengamati produksi dengan pekerja; mengubah prioritas dan melihat akibatnya.
 4. Membaca masalah pangan dari tokoh bernama; memilih satu dari sedikitnya dua respons yang masuk akal dalam ekonomi lokal.
@@ -76,7 +81,7 @@ Loop pilot memperluas surplus → relasi tetangga → keputusan politik → konf
 
 ## 6. Requirement fungsional dan penerimaan
 
-Acceptance criteria adalah **target usulan**, bukan hasil uji. Aturan pause dan batas agregasi di FR03/FR07 kini CONFIRMED; parameter, kontrak rinci dan uji penerimaannya tetap perlu diselesaikan. P0/P1/P2/Later adalah prioritas rancangan v1.0, bukan bukti persetujuan paket implementasi. Setiap implementasi kelak membutuhkan task card dan data uji tetap.
+Acceptance criteria adalah target perencanaan, bukan hasil uji. Pause/agregasi FR03/FR07 CONFIRMED dari S11; manifest slice dan FR19 PLANNING_BASELINE S12; angka/mekanik detail tetap proposal/TBD. P0/P1/P2/Later adalah prioritas, bukan approval implementasi. Setiap implementasi kelak membutuhkan task card, kontrak siap dan fixture expected.
 
 | ID / prioritas | Requirement | Acceptance criterion terukur | Manual test minimum |
 |---|---|---|---|
@@ -84,7 +89,7 @@ Acceptance criteria adalah **target usulan**, bukan hasil uji. Aturan pause dan 
 | FR02 / P0 | Input UI, dunia dan kamera tidak saling salah memicu | Klik/tap UI dan drag kamera menghasilkan 0 placement tidak disengaja; cell terpilih benar setelah pan/zoom | Pilih bangunan, tekan HUD, pan/zoom, tempatkan di sudut peta |
 | FR03 / P0 | Pause dan 1×/2×/3×; command eksplisit tetap diizinkan saat pause | Jumlah tick/input sama menghasilkan state ekonomi sama; pause menghentikan kemajuan otomatis; command valid diterapkan sekali tanpa memajukan waktu | Pause 10 detik, lakukan placement/perubahan prioritas yang diizinkan, periksa waktu tetap dan debit sekali; bandingkan fixture tick sama pada semua speed |
 | FR04 / P0 | Inventori dan produksi/konsumsi lokal | Stok akhir = awal + produksi − konsumsi − biaya; tak ada stok negatif; penyebab perubahan terlihat | Catat ledger beberapa siklus, uji stok nol dan tanpa pekerja |
-| FR05 / P1 | Ekonomi dapat dipulihkan; mekanik dan balancing masih PROPOSED/OPEN | Fixture kekurangan yang disepakati punya ≥1 jalur pemulihan; GDD menetapkan cara, prasyarat dan batas waktunya tanpa transaksi berbayar | Uji kayu/uang nol, pangan+kayu nol, seluruh pekerja teralokasi, dan peta penuh sesuai fixture valid yang disepakati |
+| FR05 / P1 | Ekonomi dapat dipulihkan; pengumpulan kayu sederhana baseline provisional, detail PROPOSED/OPEN | Fixture kekurangan punya ≥1 jalur pemulihan; GDD menetapkan prasyarat/yield/waktu dan konsekuensi tanpa transaksi berbayar | Uji kayu/uang nol, pangan+kayu nol, seluruh pekerja teralokasi, dan peta penuh sesuai fixture valid |
 | FR06 / P0 | Save/load berversi dan aman | Round-trip memulihkan state relevan; gagal load tidak mengganti sesi aktif; save rusak punya respons jelas | Simpan, tutup/buka, bandingkan stok/bangunan/tick/quest; uji file rusak dan versi tak didukung |
 | FR07 / P1 | Ekonomi warga biasa agregat; tokoh penting individual; assignment mengikuti prioritas/kapasitas | Alokasi kelompok ≤ workforce/slot tersedia; tokoh tidak dihitung ganda; jumlah sprite tidak menentukan hasil ekonomi | Ubah prioritas, uji kapasitas dan alokasi tokoh; bandingkan hasil dengan jumlah sprite berbeda atau tanpa rendering |
 | FR08 / P1 | Tokoh bernama dan satu pejabat pertanian | Dapat diajak interaksi; mandat/anggaran terlihat; tindakan di atas wewenang tidak berjalan tanpa pilihan pemain | Buka tokoh, ubah penugasan, uji batas anggaran dan permintaan keputusan besar |
@@ -98,6 +103,7 @@ Acceptance criteria adalah **target usulan**, bukan hasil uji. Aturan pause dan 
 | FR16 / Later | Offline terbatas | Hanya allowlist rutin yang maju sampai cap; perang/event besar tidak maju; resume ganda tidak menggandakan reward | Uji durasi nol/negatif/melebihi cap, stok habis, pilihan tertunda, resume berulang |
 | FR17 / Later | Multi-settlement dan logistik | Stok terpisah; transfer debit/kredit dapat direkonsiliasi; desa aktif/nonaktif setara pada input sama | Kirim muatan, berpindah desa dan load; bandingkan ledger |
 | FR18 / Later | Scheduler living history luas dan time skip; warning lokal tetap bagian FR09/FR10 slice | Kesempatan intervensi diberikan sebelum resolusi; skip berhenti pada pilihan besar; offline tidak meresolusi | Abaikan event ketika aktif, coba skip dengan pilihan tertunda, lalu suspend; warning lokal diuji bersama quest slice |
+| FR19 / P1 | Karakter pemain hadir visual dan melakukan ≥1 interaksi sederhana, PLANNING_BASELINE S12 | Pemain teridentifikasi; interaksi lewat panel bersama berhasil mouse/touch, juga saat pause; load menjaga ID; visual tidak menambah workforce atau efek ekonomi ganda | Kenali avatar, lakukan interaksi dengan pejabat, buka ulang panel, pause/resume dan save/load; uji mouse serta touch; tanpa menambah locomotion/editor avatar |
 
 FR03 kini mengikuti keputusan Director: pause menghentikan simulasi otomatis dan tetap menerima command eksplisit yang valid. Daftar command, urutan transaksi dan parameter waktu belum ditetapkan. FR16–18 tetap mencatat visi dan test intent, tanpa mengaktifkan implementasi.
 
@@ -116,8 +122,8 @@ Visi pada sumber tetap CONFIRMED dengan konflik sumber yang ditandai di [Decisio
 | D09 — unit otomatis, perintah, formasi, skill senapati | Battle pilot usulan; kedalaman setelah battle core diterima | COMBAT_DESIGN | Perintah, formasi dan skill mempunyai efek terdefinisi |
 | D10 — arena lapangan dan siege settlement | Arena pilot usulan; siege setelah kontrak combat/settlement | COMBAT_DESIGN | Siege memakai settlement terkait; kerusakan/kepemilikan bertahan setelah load |
 | D11 — kekalahan berat, kehilangan kekuasaan, kemungkinan kembali | Akibat politik pilot usulan; kontinuitas lanjut setelah O12 | WORLD_DIPLOMACY, COMBAT_DESIGN | Kalah mengubah state dan menyediakan kelanjutan/pemulihan yang dirancang |
-| D12/D13; DECISIONS karakter — pemimpin buatan pemain, enam atribut, trait, kepribadian, dinasti | Karakter awal; suksesi sederhana pilot sebagai visi; detail dan generasi lanjut setelah kalender/O08/O12 | CHARACTER_DYNASTY | Identitas/otoritas valid setelah suksesi; perubahan karakter memiliki sebab dan tersimpan |
-| D14; DECISIONS pemerintahan/intrik — pejabat, mandat, diplomasi, intelijen | Pejabat slice; intrik setelah relasi/wewenang/event | SYSTEMS_SPEC, WORLD_DIPLOMACY | Rutinitas berbatas mandat; keputusan besar oleh pemain; intrik memiliki tanda/counterplay; kudeta tetap kandidat mekanik |
+| D12/D13; DECISIONS karakter — pemimpin buatan pemain, enam atribut, trait, kepribadian, dinasti | Avatar/interaksi slice FR19; suksesi pilot tetap visi dengan scope OPEN; generasi lanjut setelah kalender/O08/O12 | MASTER_GDD, CHARACTER_DYNASTY | Avatar/interaksi sederhana teruji; identitas/otoritas valid setelah suksesi kelak; perubahan karakter memiliki sebab dan tersimpan |
+| D14; DECISIONS pemerintahan/intrik — pejabat, mandat, diplomasi, pengkhianatan, intelijen | Pejabat slice; intrik setelah relasi/wewenang/event | SYSTEMS_SPEC, WORLD_DIPLOMACY | Rutinitas berbatas mandat; keputusan besar oleh pemain; intrik/pengkhianatan memiliki tanda/counterplay; rincian kudeta tetap kandidat mekanik |
 | D15/D16/D17 — world/settlement map, kendali manual/delegasi, stok lokal/logistik | Tetangga pilot usulan; multi-desa setelah ekonomi/save stabil | WORLD_DIPLOMACY, SYSTEMS_SPEC | Pergantian kendali tidak menggandakan stok; debit/transit/penerimaan transfer dapat direkonsiliasi |
 | D19; DECISIONS kualitas — rantai produksi dan kualitas barang | Setelah produksi/inventori/pemulihan stabil | SYSTEMS_SPEC, ECONOMY_BALANCE | Input tiap tahap benar; kualitas berdampak dan tersimpan |
 | D20 — knowledge tree + ahli NPC | Setelah progresi/karakter/fasilitas | SYSTEMS_SPEC, CHARACTER_DYNASTY | Unlock memeriksa kemajuan dan ahli; penguasaan desa dibedakan dari penemuan sejarah |
@@ -145,7 +151,7 @@ Art pipeline: satu style sample desa/karakter/HUD sebelum produksi massal; catat
 
 **CONFIRMED:** sekitar krisis Tumapel awal abad ke-13; Ken Dedes/Ken Arok/Kadiri sebagai inspirasi historis-literer. Tahun 1219–1222, Tirta Wening, Babad Tanah Tumapel, tokoh spesifik, Panawijen dan struktur babak masih PROPOSED/VERIFY sesuai handoff. PRD tidak menegaskan kronologi atau batas wilayah sebagai fakta sejarah.
 
-LORE_BIBLE harus memberi source ledger: klaim, sumber, kategori (prasasti/penelitian/tradisi sastra/fiksi), tingkat kepastian, adaptasi dan reviewer. Riset primer/akademik diperlukan sebelum konten final. Fiksi harus ditandai sebagai adaptasi; hindari penyajian agama/etnis sebagai atribut moral bawaan. Kekerasan non-grafis adalah usulan tone; detail penawanan, kematian, pernikahan dan suksesi disesuaikan setelah target usia diputuskan.
+LORE_BIBLE harus memberi source ledger: klaim, sumber, kategori (prasasti/penelitian/tradisi sastra/fiksi), tingkat kepastian, adaptasi dan reviewer. Riset diperlukan sebelum konten final; fiksi ditandai sebagai adaptasi. Hindari atribut moral bawaan untuk agama/etnis. Tone non-grafis/target desain 13+ adalah baseline provisional S12; detail penawanan, kematian, pernikahan dan suksesi tetap perlu review. Tidak ada klaim rating toko dari target ini.
 
 ## 10. Requirement nonfungsional dan strategi Android-first
 
@@ -159,9 +165,9 @@ LORE_BIBLE harus memberi source ledger: klaim, sumber, kategori (prasasti/peneli
 | NFR06 | Tidak ada paket/SDK/data collection di luar approval | Review perubahan dependency dan build; metrik playtest dicatat lokal secara manual |
 | NFR07 | Modifikasi kecil, typed GDScript praktis, main.gd dipisah bertahap | Review kontrak dan regression; hindari framework generik prematur |
 
-RAM minimum, chipset/GPU, versi OS minimum, populasi, jumlah bangunan maksimum, peak memory, ukuran unduhan, waktu startup/save/load masih **TBD**. Nilai ini wajib ditetapkan setelah perangkat diketahui dan profiling; NFR02 belum dapat diterima tanpa perangkat serta fixture beban yang bernama.
+RAM minimum, chipset/GPU, versi OS minimum, populasi/bangunan maksimum, memori, ukuran unduhan dan durasi startup/save/load masih **TBD**. Profil/perangkat bernama wajib sebelum klaim kapasitas/NFR02; data ini tidak menghentikan dokumentasi atau desain input.
 
-Urutan Android diterima secara prinsip: baseline stabil → smoke awal → loop slice di perangkat → profil kapasitas → hardening distribusi. Perangkat dan pelaksanaannya masih OPEN melalui O04. Ponsel uji awal belum otomatis menjadi spesifikasi minimum yang didukung. Catat model, chipset/GPU, RAM, OS, rasio layar dan build. Pengujian Windows tidak menggantikan Android. Gunakan pengukuran lokal yang tersedia; jangan menambah SDK tanpa persetujuan.
+Baseline strategi Android-first S12: input/gameplay dasar stabil → smoke pada perangkat fisik yang tersedia → loop slice → profil kapasitas → hardening distribusi. Model/RAM/OS/GPU/ketersediaan perangkat TBD; jangan menganggap perangkat tertentu sudah tersedia. Ponsel uji awal berbeda dari minimum supported. Pengujian Windows tidak menggantikan Android; FPS hanya klaim setelah profil. Gunakan pengukuran lokal tanpa SDK baru.
 
 | Gate Android | Yang diuji ketika tersedia | Status saat revisi |
 |---|---|---|
@@ -192,7 +198,7 @@ Usulan ownership: session memiliki state otoritatif; placement mengubah okupansi
 | Offline | Allowlist, cap, konsumsi, jam mundur, kondisi berhenti dan resume tepat sekali; empat jam belum keputusan |
 | Pemulihan ekonomi | Cara memperoleh kayu, prasyarat, kapasitas rumah/populasi/workforce, konsumsi dan akibat kebutuhan tak terpenuhi |
 
-Opsi pemulihan O07 tetap PROPOSED: pengumpulan berbasis workforce, bangunan produksi sederhana, atau mekanik lain. Rumah hanya kapasitas, populasi tetap, dan tanpa kematian karena lapar juga belum diputuskan. GDD membandingkan dampak scope, petak, suplai dan tenaga kerja sebelum memilih. Untuk fixture stok nol/pekerja penuh/peta penuh, tetapkan state yang valid, tindakan, waktu dan konsekuensinya; ledger harus dapat dihitung. Gap planning dapat ditutup melalui keputusan dan spesifikasi; kelulusan implementasi membutuhkan uji tersendiri.
+Pengumpulan kayu sederhana menjadi PLANNING_BASELINE S12. Aktivitas workforce tanpa bangunan baru adalah proposal GDD; prasyarat/yield/waktu/sumber masih O07. Rumah hanya kapasitas, populasi tetap dan tanpa kematian karena lapar belum diputuskan. Untuk fixture stok nol/pekerja penuh/peta penuh, GDD menetapkan state valid, tindakan, waktu dan konsekuensi sebelum implementasi; ledger harus dapat dihitung. Gap planning dan kelulusan runtime dicatat terpisah.
 
 SAVE_FORMAT wajib disahkan sebelum persistence: envelope versi, ID konten, tick/remainder, RNG bila dipakai, stok/bangunan/assignment/tokoh/quest; validasi sebelum swap state; temporary save dan backup; versi tak dikenal ditolak; aturan migrasi serta recovery. Format JSON dan jumlah slot belum menjadi keputusan final. Jangan menyimpan Node sebagai state produk.
 
@@ -202,7 +208,7 @@ Offline baru setelah save/ekonomi/lifecycle stabil. Cap empat jam dalam blueprin
 
 **PROPOSED untuk slice:** 3 sesi playtest pemain baru; sekurangnya 2 dari 3 menyelesaikan loop dasar dalam 15 menit tanpa bantuan verbal, dapat menjelaskan mengapa pangan berubah, dan menemukan cara berinteraksi dengan tokoh. Catat waktu tindakan pertama, salah tap/placement, panel membingungkan, penyebab gagal dan kebutuhan bantuan. Sampel ini menguji usability awal, bukan bukti pasar/statistik. Jika melibatkan anak, tata cara partisipasi ditetapkan bersama wali sebelum pengujian.
 
-Gate teknis slice: semua FR01–FR11 yang berlaku lulus; nol blocker crash/data loss/aksi inti gagal; dua hasil quest dan pemulihan ekonomi terbukti; touch perangkat lulus. Tidak ada klaim gate selesai hanya dari parser. Gate pilot menambah FR12–FR15; gate MVP menambah penerimaan konten, performa dan rilis.
+Gate teknis slice: FR01–FR11 yang berlaku **dan FR19** lulus; nol blocker crash/data loss/aksi inti gagal; dua hasil quest/pemulihan dan avatar/interaksi terbukti pada mouse/touch. Semua runtime masih NOT TESTED. Lihat [Quality Gates](QUALITY_GATES.md). Gate pilot/MVP hanya diaktifkan setelah scope masing-masing disetujui; parser saja tidak meluluskan gameplay.
 
 Metode: model test untuk invariant penting; integration test command→state→HUD dan load→view; manual test dari tabel FR; playtest pengalaman; profil perangkat. Laporan memuat versi/commit, fixture, expected/actual, pass/fail/not tested, log, known limitations dan penerimaan Director. Tidak perlu analytics eksternal untuk mengukur tahap ini.
 
@@ -212,24 +218,25 @@ Roadmap resmi tetap M0–M4. Estimasi kalender ditahan sampai kapasitas pengemba
 
 | Gate | Outcome | Dependensi / keputusan |
 |---|---|---|
-| Review pra-produksi | Prinsip revisi diterima; dokumen belum APPROVED sampai pertanyaan prioritas dan persetujuan versi tercatat | O01-S/O02/O03/O04; pilot/MVP boleh tetap deferred; bukan izin implementasi |
+| Review pra-produksi | CONDITIONAL PASS reviewer; baseline provisional memungkinkan GDD/TDD/rencana berjalan | Approval eksplisit scope/produk tetap diperlukan; O03/O04 TBD tidak memblokir seluruh dokumentasi |
 | M0 audit dan baseline | Input/waktu/placement diuji; jika gagal, reproduksi dan bukti dicatat | A02 NOT TESTED; task card §19 belum dijalankan; keputusan salvage dan checkpoint hanya setelah bukti |
 | M1 fondasi | Grid, ekonomi, kamera, save aman | GDD minimum, kontrak, SAVE_FORMAT; spike Android awal usulan |
-| M2 / vertical slice | Pekerja, interaksi pejabat dan satu quest membentuk loop | M1; kriteria playtest dan perangkat |
+| M2 / vertical slice | Pekerja, avatar/interaksi pemain, pejabat dan satu quest membentuk loop | M1; kontrak fitur, kriteria playtest dan perangkat untuk tes touch |
 | M3 konflik | Target arah: tetangga, diplomasi, battle dan akibat kalah | Slice diterima; scope O01-P dan GDD terkait belum disetujui |
 | M4 pilot Android | Target arah: chapter, transisi sederhana, touch/performa | O01-P, budget konten/perangkat dan hasil M3; bukan approval isi pilot |
 | MVP hardening | Kandidat produk dan distribusi, setelah definisi disepakati | O01-M masih OPEN; bukan otomatis pilot yang dipoles |
 
 Dependency desain: scope/audit → core loop dan ekonomi → clock/placement/inventory → workforce/character → quest/official; state + schema → save; save + lifecycle + ekonomi → offline (kelak); slice → world/diplomacy → combat/outcome → pilot; kalender + karakter → suksesi. Touch/performa mengikuti fondasi sampai pilot. Lore dan provenance berjalan sebelum konten dikunci.
 
-| Paket berikut | Isi minimum | Exit criterion |
+| Paket dokumen / status | Isi minimum | Exit criterion sebelum pemakaian implementasi |
 |---|---|---|
-| AUDIT_REPORT | Versi, reproduksi, expected/actual, salvage vs rebuild | Baseline terukur; tidak mengubah source pada audit |
-| MASTER_GDD + ECONOMY_BALANCE | Loop, aturan pause/kalender, biaya/tenaga kerja, pemulihan, batas konten | Keputusan gameplay minimum disahkan |
-| QUEST_EVENTS + LORE_BIBLE | Graph dua hasil/follow-refuse-ignore, source ledger, pilihan dan deadline | Efek konsisten dan klaim konten diteliti |
-| TDD + MODULE_CONTRACTS | Model/view, ownership, command, tick order, error/invariant | Kontrak fondasi cukup untuk task kecil; tanpa membangun seluruh framework |
-| DATA_SCHEMAS + SAVE_FORMAT | Definisi/runtime, ID, versi, backup/recovery | Disahkan sebelum persistence |
-| TEST_PLAN + PERFORMANCE_BUDGET + ART_UX_GUIDE | Fixture, perangkat, beban, input, style/provenance | Kriteria slice bisa direproduksi |
+| [M0 Audit Plan](M0_AUDIT_PLAN.md) DRAFT; AUDIT_REPORT belum ada | Versi, reproduksi, expected/actual dan evidence checklist | Jalankan audit dahulu; rencana bukan laporan hasil |
+| [Master GDD](MASTER_GDD.md) DRAFT | Loop, avatar, ekonomi/quest, parameter TBD dan pagar scope; tabel balancing berada di dalam GDD | Pilih parameter dan mekanik fitur terkait; belum perlu berkas ECONOMY_BALANCE terpisah |
+| QUEST_EVENTS + LORE_BIBLE masih rencana | GDD memuat graph awal; sumber/dialog/threshold detail belum final | Dua hasil, follow/reject/ignore dan source ledger ditinjau sebelum konten final |
+| [TDD](TDD.md) DRAFT, kontrak modul/data minimum di dalamnya | Model/view, ownership, command, tick, error/invariant | Review kontrak fitur terkait; MODULE_CONTRACTS/DATA_SCHEMAS terpisah bila dibutuhkan |
+| [SAVE_FORMAT](SAVE_FORMAT.md) DRAFT | ID/versi/snapshot, backup, load staging dan failure handling | O09 dan kontrak disahkan sebelum persistence |
+| [Quality Gates](QUALITY_GATES.md) DRAFT | Model/integration/manual/Android, readiness dan evidence | Fixture/expected/perangkat siap untuk tes terkait; bukan hasil tes |
+| [AI Agent Execution Plan](AI_AGENT_EXECUTION_PLAN.md) DRAFT | Task bersyarat, owner/allowed files, dependensi dan handoff | Audit/stabilisasi dan kontrak cukup sebelum fitur diaktifkan |
 | WORLD_DIPLOMACY + COMBAT_DESIGN + CHARACTER_DYNASTY | Aturan pilot yang dibutuhkan saja | Slice lolos, scope pilot disetujui |
 | RELEASE_CHECKLIST | Distribusi, signing, rating, privasi, kebijakan resmi terkini | Hanya setelah rencana rilis konkret; bukan pernyataan compliance saat ini |
 
@@ -264,13 +271,13 @@ Register otoritatif status, sumber persetujuan, batas dan pertanyaan ada di [Dec
 
 | ID | Keputusan | Rekomendasi PROPOSED | Dibutuhkan sebelum |
 |---|---|---|---|
-| O01 | Batas slice/pilot/MVP | PRINCIPLE_ACCEPTED satu desa; O01-S manifest rinci OPEN; O01-P pilot dan O01-M MVP tetap PROPOSED/OPEN | O01-S sebelum approval PRD; pilot/MVP keputusan terpisah |
-| O02 | Audiens utama, bahasa dan tone | Bahasa Indonesia untuk prototipe, tone non-grafis; Director menetapkan rentang umur | UX/konten final dan playtest audiens |
-| O03 | Kapasitas kerja dan dana | Catat jam/minggu, biaya art/audio/perangkat dan waktu tes; belum menetapkan tanggal rilis | Estimasi delivery |
-| O04 | Perangkat Android dan spike dini | Arah diterima secara prinsip; model/RAM/OS/ketersediaan perangkat dan pelaksanaan masih OPEN; ponsel uji tidak otomatis perangkat minimum | Rencana perangkat sebelum approval PRD; validasi Android kelak |
+| O01 | Batas slice/pilot/MVP | O01-S PLANNING_BASELINE S12 termasuk avatar FR19; ratifikasi scope eksplisit OPEN; O01-P/O01-M tetap OPEN | Dokumen lanjut provisional; approval scope sebelum disebut approved |
+| O02 | Audiens utama, bahasa dan tone | PLANNING_BASELINE 13+/Indonesia/non-grafis/onboarding; bukan rating toko atau approval eksplisit Director | Desain dokumen sekarang; ratifikasi produk dan review rilis kelak |
+| O03 | Kapasitas kerja dan dana | Asumsi budget-minimal/solo/Codex; jam, budget nominal, PC dan tanggal TBD; bukan Rp0 | Data nyata sebelum estimasi/komitmen biaya; tidak memblokir dokumen |
+| O04 | Perangkat Android dan spike dini | PLANNING_BASELINE smoke setelah fondasi stabil; model/RAM/OS/GPU/ketersediaan TBD; test device bukan minimum supported | Data perangkat sebelum smoke/profil; dokumen input/QA tetap lanjut |
 | O05 | Audit, salvage/rebuild | Audit tanpa source edit; utamakan perbaikan bertahap bila biaya masuk akal | Perbaikan source |
 | O06 | Kalender, pause dan command | CONFIRMED pause menghentikan otomatis dan menerima command eksplisit; kalender, pacing dan detail kontrak OPEN | GDD clock/input sebelum implementasi terkait |
-| O07 | Ekonomi/workforce/pemulihan | CONFIRMED warga biasa agregat dan tokoh penting individual; mekanik pemulihan, rumus dan schema PROPOSED/OPEN | Spesifikasi ekonomi sebelum implementasi |
+| O07 | Ekonomi/workforce/pemulihan | CONFIRMED agregasi/individual; pengumpulan sederhana baseline provisional; detail mekanik, rumus dan schema PROPOSED/OPEN | Kontrak/fixture ekonomi sebelum implementasi |
 | O08 | Enam atribut | Ratifikasi nama baseline DECISIONS; skala dan rumus ditunda | Spesifikasi karakter |
 | O09 | Save slot/autosave/backup | Usulan 1 slot manual + autosave + backup; format/rules dalam SAVE_FORMAT | Persistence |
 | O10 | Offline cap dan konsumsi | Tunda dari slice; uji sesudah save stabil, tanpa perang/event besar | Offline |
@@ -283,22 +290,23 @@ Register otoritatif status, sumber persetujuan, batas dan pertanyaan ada di [Dec
 ## 17. Status penerimaan dokumen
 
 - PRD v1.1 adalah revisi di tempat atas v1.0; status keseluruhan **DRAFT**.
+- Review S12: **CONDITIONAL PASS**, rekomendasi diadopsi sebagai **PLANNING_BASELINE**, bukan approval eksplisit Director atas scope/usia/budget/perangkat.
 - Arah A01/A03/A04/A05/A06/A07/A08 diterima secara prinsip dengan batas pada Decision Register S11.
 - Pause dengan command eksplisit, batas agregasi, dan pelestarian seluruh visi: **CONFIRMED** sesuai instruksi Director.
-- Manifest rinci slice, audiens/bahasa, kapasitas/budget serta perangkat/rencana spike: masih memerlukan jawaban O01–O04.
+- Manifest slice termasuk FR19 dan target 13+/Indonesia/non-grafis dipakai provisional; ratifikasi produk/scope tetap OPEN. Kapasitas/budget/PC/perangkat yang belum diketahui tetap TBD; tidak menghalangi dokumen.
 - Scope pilot/MVP, mekanik pemulihan, balancing, kalender dan angka performa: belum otomatis disetujui.
 - Audit gameplay Godot A02: **NOT TESTED**. Tidak ada klaim fixed, M0 passed atau Android lolos.
 - Pekerjaan revisi ini hanya dokumentasi; kode/refactor belum diotorisasi.
 
 ### Sebelum status APPROVED
 
-1. Director menjawab pertanyaan prioritas [O01-S/O02/O03/O04](DECISION_REGISTER.md), dengan penerimaan atau perubahan manifest yang spesifik dan rencana kapasitas/perangkat yang nyata.
+1. Director secara eksplisit mengesahkan scope/produk O01-S/O02 dan batas baseline/TBD pada [Decision Register](DECISION_REGISTER.md). Jangan menyimpulkannya dari rekomendasi reviewer.
 2. Catat bagian pilot/MVP dan detail lanjutan yang tetap deferred, tanpa menghapus visi.
 3. Director secara eksplisit menyetujui versi dan lingkup PRD. Status tidak naik otomatis karena dokumen telah ditulis.
 
-Approval PRD, kelulusan runtime M0, dan otorisasi implementasi adalah gate terpisah. O06/O07/O09 serta kontrak yang diperlukan masih harus selesai sebelum fitur terkait dibangun; tidak perlu memutuskan seluruh sistem Nusantara sekarang.
+Approval PRD, kelulusan runtime M0, dan otorisasi implementasi adalah gate terpisah. O06/O07/O09 dan kontrak fitur harus siap sebelum fitur dibangun. O03 data nyata sebelum estimasi biaya/kalender; O04 data perangkat sebelum smoke/profil. Kedua TBD tidak memblokir seluruh dokumentasi. Tidak perlu memutuskan semua sistem Nusantara sekarang.
 
-Langkah berikut: review jawaban O01–O04, lalu audit baseline terpisah dan finalisasi GDD/TDD minimum menurut dependensi. Urutan ini mempertahankan [handoff §12–13](../Satriya_Village_Planning_Handoff_v1.md) dan batas instruksi Director terbaru.
+Paket GDD/TDD/execution/gates kini disiapkan sebagai draft. Langkah eksekusi berikut adalah audit baseline sesuai [M0 Audit Plan](M0_AUDIT_PLAN.md), stabilisasi jika diperlukan, lalu review kontrak fitur. Dokumen tidak mengaktifkan task coding otomatis.
 
 ### Catatan verifikasi penyusunan v1.0 — historis
 
@@ -315,21 +323,24 @@ Catatan di atas merekam tugas v1.0, bukan status Git atau hasil verifikasi v1.1.
 | v1.0 / 26 Oktober 2026 | Handoff + DECISIONS + paket planning | Draft awal; baseline lengkap tersedia dalam riwayat Git `ef512596:docs/PRD.md` dan `86cfe43:docs/PRD.md` |
 | Proposal v1.1 / 26 Oktober 2026 | Audit independen dan review di chat | Rekomendasi read-only; belum mengubah dokumen atau memberi approval |
 | v1.1 / 26 Oktober 2026 | Persetujuan prinsip Director dengan enam ketentuan, dicatat sebagai S11 | Revisi pada berkas PRD yang sama; ID dan §1–17 dipertahankan; tambah register, traceability, gate approval dan task card; tetap DRAFT |
+| v1.1 editorial / 26 Oktober 2026 | CONDITIONAL PASS reviewer disampaikan pengguna, sumber S12 | Manifest/13+/Indonesia/Android/operasional menjadi baseline provisional; tambah FR19 tanpa scope avatar besar; data tetap TBD; siapkan GDD/TDD/save/execution/gates/audit; belum APPROVED |
 
 | Audit / sumber gap | Tindak lanjut v1.1 | Yang belum selesai |
 |---|---|---|
-| A01 / C06–C08, G01–G03 | §4/§16/§17, O01 dipisahkan slice/pilot/MVP | Jawaban O01–O04 dan approval versi |
+| A01 / C06–C08, G01–G03 | Manifest S12 menjadi baseline provisional; O01-S/O01-P/O01-M terpisah | Ratifikasi versi/scope; O03/O04 data TBD menunggu pemakaian, bukan memblokir semua dokumen |
 | A03 / C09–C10, G05 | FR03/§11 dan register: pause confirmed, kontrak waktu dipetakan | Kalender, pacing, deadline/skip/offline dan spesifikasi |
 | A04 / C13 | FR07/§11 serta blueprint: batas agregasi confirmed | Schema, rumus workforce dan aturan perjalanan |
-| A05 / G06 | FR05/§11: opsi, fixture dan pemulihan tetap usulan | Pilihan mekanik/balancing dan expected fixture |
+| A05 / G06 | Pengumpulan kayu sederhana baseline; detail O07 dan fixture di GDD | Prasyarat/yield/balancing dan expected fixture sebelum implementasi |
 | A06 / C01–C02, G16 | Decision Register dengan sumber S11/status/batas | Konflik nama O08/O11 serta keputusan yang belum dijawab |
 | A07 | §7 + ROADMAP melacak seluruh visi | Gate/desain rinci dan acceptance implementasi kelak |
-| A08 / C08, G11–G12 | §10: arah Android dini, gate dan kebutuhan perangkat | O04/O14 dan hasil pengujian perangkat |
+| A08 / C08, G11–G12 | Smoke setelah fondasi stabil sebagai baseline; test device/minimum supported dibedakan | O04 perangkat TBD, O14 target/profile dan bukti perangkat |
 | A02 / C03, G04 | §19 menyiapkan audit read-only | NOT TESTED sampai bukti runtime |
 
 ## 19. Task card A02 — audit runtime read-only
 
 **ID:** AUDIT-M0-01. **Status:** NOT TESTED; task card belum dijalankan. **Tujuan:** membuktikan perilaku starter dan mereproduksi kegagalan. **Batas:** tidak mengubah source, scene, konfigurasi, aset atau gameplay; tidak refactor/fix dalam audit.
+
+Task card lengkap, ID kasus dan evidence matrix kini ada di [M0 Audit Plan](M0_AUDIT_PLAN.md), dengan [Quality Gates Q1/Q2](QUALITY_GATES.md) yang membedakan selesai audit dari M0 passed. Ringkasan baseline di bawah dipertahankan dari v1.1 awal; baseline commit aktual diperiksa ulang saat eksekusi. Ini masih rencana, bukan laporan pengujian.
 
 Catat commit/working tree dan versi Godot aktual saat eksekusi. Audit independen memakai `ef512596`; saat revisi dimulai HEAD `86cfe43`, dengan source gameplay/scene/config yang sama menurut diff. Ini perbandingan source, bukan bukti F5. Untuk menjaga repository sumber read-only, jalankan salinan kerja terpisah dan simpan laporan/log/video di luar repository sumber. Catat side effect cache/editor. Kelanjutan tugas membutuhkan instruksi audit tersendiri.
 

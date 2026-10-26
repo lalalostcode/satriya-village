@@ -4,9 +4,11 @@ Status: usulan, bukan struktur yang sudah diimplementasikan. Baca [Master Planni
 
 Pembaruan dokumentasi v1.1: [Decision Register](DECISION_REGISTER.md) mencatat dua aturan confirmed dari Director, yaitu pause dengan command eksplisit dan ekonomi warga biasa agregat/tokoh penting individual. Rincian teknis di bawah tetap proposal; tidak ada approval arsitektur menyeluruh atau otorisasi implementasi. [PRD](PRD.md) masih DRAFT; audit gameplay A02 NOT TESTED.
 
+Detail kontrak terkini dirangkum dalam draft [TDD](TDD.md) dan [SAVE_FORMAT](SAVE_FORMAT.md), termasuk snapshot setelah explicit command saat pause dan avatar/interaksi FR19. Baseline monolith di bawah adalah snapshot planning awal, bukan sertifikasi working tree saat ini. Perubahan source lain yang sedang berlangsung harus diaudit terpisah.
+
 ## Baseline dan arah migrasi
 
-Saat ini `scenes/main.tscn` hanya mempunyai Node2D yang menjalankan `scripts/main.gd`; HUD dibentuk lewat kode. Jangan mengganti seluruh scene. Setelah audit lolos, ekstrak satu tanggung jawab per tugas: clock → placement/grid → inventori/ekonomi → persistence → pekerja → quest. Setiap ekstraksi mempertahankan perilaku teruji sebelum menambah aturan baru.
+Pada snapshot awal, `scenes/main.tscn` menjalankan `scripts/main.gd`; HUD dibentuk lewat kode. Jangan mengganti seluruh scene. Setelah audit/stabilisasi dan kontrak siap, ekstrak satu tanggung jawab per tugas; pertahankan perilaku teruji sebelum menambah aturan baru. Urutan detail mengikuti Execution Plan dan dependensi nyata.
 
 ## Struktur target bertahap
 
@@ -89,9 +91,9 @@ Event besar memakai state rumor/tension/warning/intervention/resolved. Simpan de
 
 ## Save/load: rancangan sebelum implementasi
 
-SAVE_FORMAT.md harus disetujui sebelum persistence dikerjakan. Usulan v1: JSON di `user://`, envelope dengan schema_version, content_version, timestamp UTC, tick, remainder, RNG, dan seluruh state runtime. Vector cell diserialisasi sebagai dua integer, bukan Dictionary key Vector2i. Jangan serialisasi Node atau resource path arbitrer dari berkas save.
+[SAVE_FORMAT](SAVE_FORMAT.md) kini tersedia sebagai draft dan harus ditinjau/disahkan sebelum persistence. Usulan v1: JSON di lokasi data aplikasi, envelope dengan schema/content version, timestamp, tick/remainder, state_revision dan state yang benar-benar digunakan. Cell sebagai dua integer; tanpa Node atau resource path arbitrer.
 
-Simpan snapshot konsisten di akhir tick ke temporary file; baca-validasi hasilnya; pertahankan backup save lama; baru ganti save aktif. Verifikasi perilaku penggantian berkas pada Windows dan Android. Saat load: parse → validasi tipe/range/ID/reference → migrasi versi dikenal → buat state terpisah → tukar state aktif bila seluruh langkah sukses. Versi lebih baru ditolak dengan pesan jelas; korupsi menawarkan backup, bukan reset diam-diam. Uji disk penuh/kegagalan tulis tanpa merusak salinan baik.
+Simpan snapshot setelah transaksi/tick selesai; saat pause snapshot setelah command tidak menunggu tick. Candidate tervalidasi dan backup menjaga last good sebelum penggantian current. Verifikasi replacement pada Windows/Android. Load melalui parse/validasi/migrasi dikenal/staging lalu swap bila sukses; versi baru ditolak dan corrupt menawarkan recovery, bukan reset diam-diam. Uji interupsi/gagal tulis tanpa merusak last good.
 
 Offline ditunda sampai save dan ekonomi stabil. Usulan delta = clamp(now_utc − saved_utc, 0, cap); cap empat jam masih perlu keputusan balancing. Rollback jam menghasilkan nol; loncatan jam dibatasi, bukan dianggap mekanisme anti-cheat. Hanya produksi/konsumsi dan konstruksi yang sudah disetujui masuk allowlist. Berhenti pada batas keputusan atau kondisi pemulihan yang disepakati. Gunakan transaksi/state snapshot agar resume dua kali tidak menggandakan hasil. Ringkasan menunjukkan durasi, produksi, konsumsi, dan alasan berhenti. Background Android diperlakukan seperti suspend; tidak menjalankan loop tersembunyi.
 
