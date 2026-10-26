@@ -1,4 +1,8 @@
-# Satriya Village — Save Format v1
+# Satriya Village — Save Format v2 (v1 migration supported)
+
+## Current M2 contract — schema v2
+
+The [aggregate-workforce contract](M2_WORKFORCE_CONTRACT.md) extends the current payload to schema 2/content `prototype-2` with `settlement.farm_worker_target` (-1 automatic, otherwise integer 0..population). All v1 paths, integrity/recovery and autosave policies remain in force. Strict v1/prototype-1 files migrate on a copy to automatic allocation and pass complete v2 validation; load does not rewrite the original file. Unknown future versions/content remain protected. Derived assignments and daily reports are not serialized. The v1 section below is the previous schema reference, superseded only where this extension says so.
 
 ## Prototype implementation contract — 2026-10-26
 

@@ -97,7 +97,7 @@ func test_validation() -> bool:
     var cases: Array = []
     for value: Variant in [null, [], "data", 42, true]:
         cases.append(value)
-    for value: Variant in [2, 0, 1.5, true, "1"]:
+    for value: Variant in [3, 0, 1.5, true, "2"]:
         var data := base.duplicate(true)
         data.schema_version = value
         cases.append(data)
@@ -138,7 +138,7 @@ func test_validation() -> bool:
         store._write_text(store.path, text)
         check(store.load_game().ok, false, "empty/truncated/wrong root rejected")
     var future := base.duplicate(true)
-    future.schema_version = 2
+    future.schema_version = 3
     var future_text := JSON.stringify(future)
     store._write_text(store.path, future_text)
     check(store.save_game(Settlement.new(), Clock.new()).error, "protected_save", "newer primary protected")
@@ -234,6 +234,7 @@ func restart_fixture() -> bool:
         var model := Settlement.new()
         var clock := Clock.new()
         model.try_place("granary", Vector2i(9, 9))
+        model.set_farm_worker_target(1)
         clock.day = 12
         clock.elapsed = 6.25
         clock.speed = 0.0
@@ -246,4 +247,6 @@ func restart_fixture() -> bool:
         check(result.clock.day, 12, "day survives restart")
         check(result.clock.elapsed, 6.25, "remainder survives restart")
         check(result.clock.speed, 0.0, "pause survives restart")
+        check(result.settlement.farm_worker_target, 1, "worker policy survives restart")
+        check(result.settlement.workforce().production, 5, "worker-limited production survives restart")
     return true

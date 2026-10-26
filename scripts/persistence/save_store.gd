@@ -15,12 +15,13 @@ func capture(settlement: RefCounted, clock: RefCounted) -> Dictionary:
     for cell: Vector2i in settlement.buildings:
         buildings.append({"id": settlement.buildings[cell], "x": cell.x, "y": cell.y})
     return {
-        "schema_version": 1, "content_version": "prototype-1",
+        "schema_version": 2, "content_version": "prototype-2",
         "saved_at_utc": int(Time.get_unix_time_from_system()),
         "clock": {"day": clock.day, "elapsed": clock.elapsed, "speed": clock.speed},
         "settlement": {
             "id": "village-1", "width": 10, "height": 10,
             "population": settlement.population, "stocks": settlement.stocks.duplicate(),
+            "farm_worker_target": settlement.farm_worker_target,
             "buildings": buildings,
         },
     }
@@ -45,12 +46,21 @@ func _integer(value: Variant, low: int, high: int) -> bool:
 func validate(data: Variant) -> Dictionary:
     if not data is Dictionary:
         return _failure("format")
-    if not _integer(data.get("schema_version"), 1, MAX_VALUE) or data.schema_version != 1:
+    if not _integer(data.get("schema_version"), 1, 2):
         return _failure("version")
-    if data.get("content_version") != "prototype-1":
+    var content: String = "prototype-1" if data.schema_version == 1 else "prototype-2"
+    if data.get("content_version") != content:
         return _failure("content")
     if not _keys(data, ["schema_version", "content_version", "saved_at_utc", "clock", "settlement"]):
         return _failure("fields")
+    if data.schema_version == 1:
+        if not _keys(data.settlement, ["id", "width", "height", "population", "stocks", "buildings"]):
+            return _failure("settlement")
+        var upgraded: Dictionary = data.duplicate(true)
+        upgraded.schema_version = 2
+        upgraded.content_version = "prototype-2"
+        upgraded.settlement.farm_worker_target = -1
+        return validate(upgraded)
     if not _integer(data.saved_at_utc, 0, 9999999999):
         return _failure("timestamp")
     var c: Variant = data.clock
@@ -61,12 +71,14 @@ func validate(data: Variant) -> Dictionary:
     if c.elapsed < 0.0 or c.elapsed >= Clock.SECONDS_PER_DAY or not _integer(c.speed, 0, 3):
         return _failure("clock")
     var s: Variant = data.settlement
-    if not _keys(s, ["id", "width", "height", "population", "stocks", "buildings"]):
+    if not _keys(s, ["id", "width", "height", "population", "stocks", "buildings", "farm_worker_target"]):
         return _failure("settlement")
     if s.id != "village-1" or not _integer(s.width, 10, 10) or not _integer(s.height, 10, 10):
         return _failure("map")
     if not _integer(s.population, 0, MAX_VALUE) or not _keys(s.stocks, ["wood", "food", "coins"]):
         return _failure("inventory")
+    if not _integer(s.farm_worker_target, -1, int(s.population)):
+        return _failure("workforce")
     for value: Variant in s.stocks.values():
         if not _integer(value, 0, MAX_VALUE):
             return _failure("inventory")
@@ -88,6 +100,7 @@ func validate(data: Variant) -> Dictionary:
     for key: String in s.stocks:
         model.stocks[key] = int(s.stocks[key])
     model.population = int(s.population)
+    model.farm_worker_target = int(s.farm_worker_target)
     var restored_clock := Clock.new()
     restored_clock.day = int(c.day)
     restored_clock.elapsed = float(c.elapsed)

@@ -46,8 +46,8 @@ func _run() -> void:
 func exercise() -> bool:
     # Inject events through the viewport, including GUI consumption, not signals alone.
     for button: Node in game.find_children("*", "Button", true, false):
-        if button.is_in_group("persistence_controls"):
-            continue # File I/O and these buttons are covered by test_persistence.gd.
+        if button.is_in_group("persistence_controls") or button.is_in_group("workforce_controls"):
+            continue # Dedicated persistence/workforce suites cover these controls.
         var before: int = game.settlement.buildings.size()
         click_at(button.get_global_rect().get_center())
         check(game.settlement.buildings.size(), before, "HUD never places: " + button.text)

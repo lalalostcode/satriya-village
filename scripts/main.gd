@@ -38,6 +38,9 @@ var autosave_label: Label
 var autosave_button: Button
 var hud_header: PanelContainer
 var hud_footer: PanelContainer
+var farm_minus_button: Button
+var farm_plus_button: Button
+var farm_auto_button: Button
 
 
 func _ready() -> void:
@@ -58,6 +61,8 @@ func _process(delta: float) -> void:
     for i in days:
         settlement.advance_day()
     if days > 0:
+        var report: Dictionary = settlement.last_day_report
+        status_label.text = "Hari %d: panen +%d, konsumsi %d, kurang %d; pangan bersih %+d." % [clock.day, report.produced, report.consumed, report.unmet, report.net]
         _update_hud()
     _accept_autosave_result(autosave.advance(delta, settlement, clock))
     queue_redraw()
@@ -273,7 +278,7 @@ func _setup_hud() -> void:
     header.add_child(top)
 
     var title := Label.new()
-    title.text = "SATRIYA VILLAGE  |  Prototype 0.2"
+    title.text = "SATRIYA VILLAGE  |  Prototype 0.3"
     title.add_theme_font_size_override("font_size", 19)
     top.add_child(title)
     var space := Control.new()
@@ -286,8 +291,8 @@ func _setup_hud() -> void:
 
     var footer := PanelContainer.new()
     hud_footer = footer
-    footer.position = Vector2(20, 536)
-    footer.size = Vector2(1240, 168)
+    footer.position = Vector2(20, 516)
+    footer.size = Vector2(1240, 188)
     layer.add_child(footer)
     var vertical := VBoxContainer.new()
     vertical.add_theme_constant_override("separation", 5)
@@ -338,8 +343,24 @@ func _setup_hud() -> void:
     autosave_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     files.add_child(autosave_label)
 
+    var workers := HBoxContainer.new()
+    workers.add_theme_constant_override("separation", 10)
+    vertical.add_child(workers)
+    for entry in [["Petani -", _change_farm_workers.bind(-1)], ["Petani +", _change_farm_workers.bind(1)], ["Otomatis", _automatic_farming]]:
+        var button := Button.new()
+        button.custom_minimum_size = Vector2(44, 44)
+        button.text = entry[0]
+        button.add_to_group("workforce_controls")
+        button.pressed.connect(entry[1])
+        button.tooltip_text = "Satu petani mengaktifkan satu sawah; tanpa petani tidak ada panen."
+        workers.add_child(button)
+        match entry[0]:
+            "Petani -": farm_minus_button = button
+            "Petani +": farm_plus_button = button
+            "Otomatis": farm_auto_button = button
     help_label = Label.new()
-    vertical.add_child(help_label)
+    help_label.tooltip_text = "Tap/klik: bangun | Geser jari/mouse tengah: kamera | Cubit/roda: zoom"
+    workers.add_child(help_label)
     status_label = Label.new()
     status_label.text = "Selamat datang! Pilih bangunan, lalu klik petak kosong di desa."
     vertical.add_child(status_label)
@@ -354,6 +375,20 @@ func _select_building(kind: String) -> void:
 func _set_speed(value: float) -> void:
     clock.set_speed(value)
     status_label.text = "Waktu dijeda." if clock.speed == 0.0 else "Kecepatan waktu: %sx." % str(int(clock.speed))
+    _update_hud()
+
+
+func _change_farm_workers(delta: int) -> void:
+    var workers: Dictionary = settlement.workforce()
+    var target: int = clampi(int(workers.assigned) + delta, 0, int(workers.capacity))
+    if settlement.set_farm_worker_target(target):
+        status_label.text = "Batas petani: %d. Berlaku untuk panen berikutnya." % target
+        _update_hud()
+
+
+func _automatic_farming() -> void:
+    settlement.set_farm_worker_target(-1)
+    status_label.text = "Petani dialokasikan otomatis sesuai warga dan sawah yang tersedia."
     _update_hud()
 
 
@@ -434,4 +469,10 @@ func _update_hud() -> void:
     if time_label != null:
         time_label.text = "Hari %d  |  %sx" % [clock.day, str(int(clock.speed))]
     if help_label != null:
-        help_label.text = "Dipilih: %s | Tap/klik: bangun | Geser jari/mouse tengah: kamera | Cubit/roda: zoom | 1 hari = 8 detik (1x)" % current_building
+        var workers: Dictionary = settlement.workforce()
+        var projection: Dictionary = settlement.food_projection()
+        var mode: String = "Auto" if settlement.farm_worker_target == -1 else "Batas %d" % settlement.farm_worker_target
+        help_label.text = "Petani %d/%d | Bebas %d | Pangan +%d -%d = %+d/hari | %s | %s" % [workers.assigned, workers.slots, workers.idle, projection.produced, projection.consumed, projection.net, mode, current_building]
+        farm_minus_button.disabled = workers.assigned == 0
+        farm_plus_button.disabled = workers.assigned >= workers.capacity
+        farm_auto_button.disabled = settlement.farm_worker_target == -1
