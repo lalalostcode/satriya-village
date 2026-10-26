@@ -16,6 +16,7 @@ Mulai di sini untuk menemukan dokumen proyek dan mengetahui fungsi masing-masing
 | [README](../README.md) | Cara membuka proyek Godot dan ringkasan kemampuan starter. | Panduan proyek; daftar fitur belum membuktikan runtime bekerja. |
 | [Handoff perencanaan](../Satriya_Village_Planning_Handoff_v1.md) | Merangkum visi, keputusan, usulan, hal yang perlu diverifikasi, serta permintaan PRD. | Bahan sumber; bukan PRD final. |
 | [AGENTS](../AGENTS.md) | Aturan kerja agent: scope, keselamatan, gaya kode, verifikasi, dan peran. | Instruksi repository. |
+| [Task Log](TASK_LOG.md) | Catatan setelah setiap instruksi/tugas pengguna selesai: hasil, berkas terkait, verifikasi, dan pelajaran untuk agent berikutnya. | Riwayat pelaksanaan; satu entri per tugas, bukan per edit kode. |
 | [DECISIONS](DECISIONS.md) | Mencatat arah desain yang sudah disetujui, termasuk visi sistem masa depan. | Keputusan yang berlaku; tidak semua fitur dijadwalkan untuk MVP. |
 | [ROADMAP](ROADMAP.md) | Menetapkan urutan milestone M0–M4 dan batas implementasi. | Roadmap yang berlaku. |
 | [Gap Analysis](GAP_ANALYSIS.md) | Menunjukkan konflik antardokumen, informasi yang belum ada, prioritas, serta bukti/keputusan untuk menutupnya. | Draf untuk review Game Director. |
