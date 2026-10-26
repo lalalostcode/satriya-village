@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://2tck5m0wq1y7"
-path="res://.godot/imported/bamboo.png-a71003ff7ab462def616ee307df19be6.ctex"
+uid="uid://bh2vp1wsc8ggw"
+path="res://.godot/imported/joglo.png-410a8168e7ac3c0036acd55675cf76eb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/bamboo.png"
-dest_files=["res://.godot/imported/bamboo.png-a71003ff7ab462def616ee307df19be6.ctex"]
+source_file="res://assets/visual/source_crops/buildings/joglo.png"
+dest_files=["res://.godot/imported/joglo.png-410a8168e7ac3c0036acd55675cf76eb.ctex"]
 
 [params]
 

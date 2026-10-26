@@ -1,114 +1,146 @@
 {
 	"bamboo": {
+		"category": "vegetation",
 		"ground_offset": 8,
 		"height": 49,
+		"source_crop": "res://assets/visual/source_crops/vegetation/bamboo.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/bamboo.png",
+		"texture": "res://assets/visual/sprites/vegetation/bamboo.png",
 		"width": 46
 	},
 	"banana": {
+		"category": "vegetation",
 		"ground_offset": 8,
 		"height": 49,
+		"source_crop": "res://assets/visual/source_crops/vegetation/banana.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/banana.png",
+		"texture": "res://assets/visual/sprites/vegetation/banana.png",
 		"width": 48
 	},
 	"bridge": {
+		"category": "props",
 		"ground_offset": 8,
 		"height": 45,
+		"source_crop": "res://assets/visual/source_crops/props/bridge.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/bridge.png",
+		"texture": "res://assets/visual/sprites/props/bridge.png",
 		"width": 66
 	},
 	"citizen": {
+		"category": "characters",
 		"ground_offset": 0,
 		"height": 36,
+		"source_crop": "res://assets/visual/source_crops/characters/citizen.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/citizen.png",
+		"texture": "res://assets/visual/sprites/characters/citizen.png",
 		"width": 18
 	},
 	"farmer": {
+		"category": "characters",
 		"ground_offset": 0,
 		"height": 24,
+		"source_crop": "res://assets/visual/source_crops/characters/farmer.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/farmer.png",
+		"texture": "res://assets/visual/sprites/characters/farmer.png",
 		"width": 20
 	},
 	"fence": {
+		"category": "props",
 		"ground_offset": 8,
 		"height": 29,
+		"source_crop": "res://assets/visual/source_crops/props/fence.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/fence.png",
+		"texture": "res://assets/visual/sprites/props/fence.png",
 		"width": 40
 	},
 	"field": {
+		"category": "agriculture",
 		"ground_offset": 8,
 		"height": 46,
+		"source_crop": "res://assets/visual/source_crops/agriculture/field.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/field.png",
+		"texture": "res://assets/visual/sprites/agriculture/field.png",
 		"width": 76
 	},
 	"flowers": {
+		"category": "props",
 		"ground_offset": 8,
 		"height": 21,
+		"source_crop": "res://assets/visual/source_crops/props/flowers.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/flowers.png",
+		"texture": "res://assets/visual/sprites/props/flowers.png",
 		"width": 28
 	},
 	"gate": {
+		"category": "buildings",
 		"ground_offset": 8,
 		"height": 62,
+		"source_crop": "res://assets/visual/source_crops/buildings/gate.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/gate.png",
+		"texture": "res://assets/visual/sprites/buildings/gate.png",
 		"width": 66
 	},
 	"granary": {
+		"category": "buildings",
 		"ground_offset": 8,
 		"height": 79,
+		"source_crop": "res://assets/visual/source_crops/buildings/granary.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/granary.png",
+		"texture": "res://assets/visual/sprites/buildings/granary.png",
 		"width": 70
 	},
 	"house": {
+		"category": "buildings",
 		"ground_offset": 8,
 		"height": 72,
+		"source_crop": "res://assets/visual/source_crops/buildings/house.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/house.png",
+		"texture": "res://assets/visual/sprites/buildings/house.png",
 		"width": 74
 	},
 	"joglo": {
+		"category": "buildings",
 		"ground_offset": 8,
 		"height": 84,
+		"source_crop": "res://assets/visual/source_crops/buildings/joglo.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/joglo.png",
+		"texture": "res://assets/visual/sprites/buildings/joglo.png",
 		"width": 88
 	},
 	"leader": {
+		"category": "characters",
 		"ground_offset": 0,
 		"height": 33,
+		"source_crop": "res://assets/visual/source_crops/characters/leader.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/leader.png",
+		"texture": "res://assets/visual/sprites/characters/leader.png",
 		"width": 18
 	},
 	"palm": {
+		"category": "vegetation",
 		"ground_offset": 8,
 		"height": 73,
+		"source_crop": "res://assets/visual/source_crops/vegetation/palm.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/palm.png",
+		"texture": "res://assets/visual/sprites/vegetation/palm.png",
 		"width": 62
 	},
 	"pendopo": {
+		"category": "buildings",
 		"ground_offset": 8,
 		"height": 96,
+		"source_crop": "res://assets/visual/source_crops/buildings/pendopo.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/pendopo.png",
+		"texture": "res://assets/visual/sprites/buildings/pendopo.png",
 		"width": 96
 	},
 	"tree": {
+		"category": "vegetation",
 		"ground_offset": 8,
 		"height": 62,
+		"source_crop": "res://assets/visual/source_crops/vegetation/tree.png",
 		"status": "AI_GENERATED_CANDIDATE_NOT_APPROVED",
-		"texture": "res://assets/visual/sprites/tree.png",
+		"texture": "res://assets/visual/sprites/vegetation/tree.png",
 		"width": 66
 	}
 }

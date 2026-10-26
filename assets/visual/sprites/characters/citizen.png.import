@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://by6mds57fa0j1"
-path="res://.godot/imported/pendopo.png-044770db24ef827206de70f25ad7f1cb.ctex"
+uid="uid://c72pjoh5j2vyq"
+path="res://.godot/imported/citizen.png-6dfcb24965fe01309a0a475276322bdc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/pendopo.png"
-dest_files=["res://.godot/imported/pendopo.png-044770db24ef827206de70f25ad7f1cb.ctex"]
+source_file="res://assets/visual/sprites/characters/citizen.png"
+dest_files=["res://.godot/imported/citizen.png-6dfcb24965fe01309a0a475276322bdc.ctex"]
 
 [params]
 

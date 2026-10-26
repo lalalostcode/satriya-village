@@ -14,24 +14,38 @@ All paths below are relative to `assets/visual/sprites/`; all 16 are **AI-genera
 
 | PNG | Role |
 |---|---|
-| house.png | Bamboo/wood house with rumbia roof |
-| joglo.png | Javanese house, raised central roof |
-| pendopo.png | Open meeting pavilion |
-| granary.png | Raised rice store and ladder |
-| gate.png | Brick cultural gateway |
-| field.png | Flooded paddy plot |
-| palm.png | Coconut tree |
-| banana.png | Banana plant |
-| bamboo.png | Bamboo clump |
-| tree.png | Tropical broadleaf tree |
-| fence.png | Bamboo fence segment |
-| flowers.png | Garden with pot |
-| farmer.png | Caping farmer with hoe |
-| leader.png | Raras, terracotta clothing and gold sash |
-| citizen.png | Teal-clothed villager |
-| bridge.png | Timber bridge with water base |
+| buildings/house.png | Bamboo/wood house with rumbia roof |
+| buildings/joglo.png | Javanese house, raised central roof |
+| buildings/pendopo.png | Open meeting pavilion |
+| buildings/granary.png | Raised rice store and ladder |
+| buildings/gate.png | Brick cultural gateway |
+| agriculture/field.png | Flooded paddy plot |
+| vegetation/palm.png | Coconut tree |
+| vegetation/banana.png | Banana plant |
+| vegetation/bamboo.png | Bamboo clump |
+| vegetation/tree.png | Tropical broadleaf tree |
+| props/fence.png | Bamboo fence segment |
+| props/flowers.png | Garden with pot |
+| characters/farmer.png | Caping farmer with hoe |
+| characters/leader.png | Raras, terracotta clothing and gold sash |
+| characters/citizen.png | Teal-clothed villager |
+| props/bridge.png | Timber bridge with water base |
 
 Ground grass/path/water tiles and selection outlines remain **code-drawn placeholders**. UI is native Godot Controls with square warm-colored borders, not final pixel-panel art. Resource/day/quest/character values are mock data. Idle is a one-pixel decorative bob, not a walk/work animation.
+
+## Folder categories — saved source crops and runtime sprites
+
+The complete original atlas remains `source_atlas.png`. All 16 elements have two transparent PNG versions with matching category/name paths:
+
+- `source_crops/`: cropped at source resolution, before runtime resizing; alpha cleanup retained.
+- `sprites/`: smaller nearest-resized files used by Godot.
+- `buildings/`: house, joglo, pendopo, granary, gate (5).
+- `agriculture/`: rice field (1).
+- `vegetation/`: palm, banana, bamboo, tree (4).
+- `props/`: fence, flowers/pot, bridge (3).
+- `characters/`: farmer, leader, citizen (3).
+
+Both versions are indexed by `sprite_manifest.json` through `texture`, `source_crop` and `category`. The atlas source is preserved unchanged. This filing request does not change the pending art-review status.
 
 ## Replace/import pipeline (implemented)
 

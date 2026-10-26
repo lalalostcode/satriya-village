@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://blcfuoupw3equ"
-path="res://.godot/imported/bridge.png-ee3f69e219f05a3905d107abfb3ba80e.ctex"
+uid="uid://jwcst66yh0wp"
+path="res://.godot/imported/granary.png-6c5de98986e11044300d27440c195f5e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/bridge.png"
-dest_files=["res://.godot/imported/bridge.png-ee3f69e219f05a3905d107abfb3ba80e.ctex"]
+source_file="res://assets/visual/sprites/buildings/granary.png"
+dest_files=["res://.godot/imported/granary.png-6c5de98986e11044300d27440c195f5e.ctex"]
 
 [params]
 

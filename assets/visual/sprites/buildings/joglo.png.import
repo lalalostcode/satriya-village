@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cp2ydgmjqvtsd"
-path="res://.godot/imported/gate.png-677f35fcb0f958685816d18ddac6fa81.ctex"
+uid="uid://cnn40thgehuhe"
+path="res://.godot/imported/joglo.png-935cafef8b0c123a4f955147eb6ead9b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/gate.png"
-dest_files=["res://.godot/imported/gate.png-677f35fcb0f958685816d18ddac6fa81.ctex"]
+source_file="res://assets/visual/sprites/buildings/joglo.png"
+dest_files=["res://.godot/imported/joglo.png-935cafef8b0c123a4f955147eb6ead9b.ctex"]
 
 [params]
 

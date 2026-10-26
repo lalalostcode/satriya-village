@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3txaysv86t00"
-path="res://.godot/imported/palm.png-ad6e122cbb51f272868b15d3bfe7a445.ctex"
+uid="uid://3tp8xwbsakcv"
+path="res://.godot/imported/leader.png-cc2fb9b564dd2cd4b4221472b1345e0a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/palm.png"
-dest_files=["res://.godot/imported/palm.png-ad6e122cbb51f272868b15d3bfe7a445.ctex"]
+source_file="res://assets/visual/sprites/characters/leader.png"
+dest_files=["res://.godot/imported/leader.png-cc2fb9b564dd2cd4b4221472b1345e0a.ctex"]
 
 [params]
 

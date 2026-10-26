@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://duoa0ogdw65c2"
-path="res://.godot/imported/house.png-1f17acebb4fb802f4693d218027b342d.ctex"
+uid="uid://blcfuoupw3equ"
+path="res://.godot/imported/bridge.png-8c8d8cdf8b5023cf13779743a147a042.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/house.png"
-dest_files=["res://.godot/imported/house.png-1f17acebb4fb802f4693d218027b342d.ctex"]
+source_file="res://assets/visual/sprites/props/bridge.png"
+dest_files=["res://.godot/imported/bridge.png-8c8d8cdf8b5023cf13779743a147a042.ctex"]
 
 [params]
 

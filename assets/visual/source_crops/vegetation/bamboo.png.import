@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://jwcst66yh0wp"
-path="res://.godot/imported/granary.png-d10aa6e0c6495734ef675763333aac7a.ctex"
+uid="uid://dxxklwpcl84um"
+path="res://.godot/imported/bamboo.png-247f0f2daa92bd5e9258a26743da9aa1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/granary.png"
-dest_files=["res://.godot/imported/granary.png-d10aa6e0c6495734ef675763333aac7a.ctex"]
+source_file="res://assets/visual/source_crops/vegetation/bamboo.png"
+dest_files=["res://.godot/imported/bamboo.png-247f0f2daa92bd5e9258a26743da9aa1.ctex"]
 
 [params]
 

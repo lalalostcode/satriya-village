@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxfdgk4v5wseu"
-path="res://.godot/imported/banana.png-b569ee9c47b4d4e7fb6c97f3891b6070.ctex"
+uid="uid://cdlbc3alkx2q7"
+path="res://.godot/imported/farmer.png-03b15e5fb0eb9c09d5896e5e67d8afbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/visual/sprites/banana.png"
-dest_files=["res://.godot/imported/banana.png-b569ee9c47b4d4e7fb6c97f3891b6070.ctex"]
+source_file="res://assets/visual/sprites/characters/farmer.png"
+dest_files=["res://.godot/imported/farmer.png-03b15e5fb0eb9c09d5896e5e67d8afbe.ctex"]
 
 [params]
 
