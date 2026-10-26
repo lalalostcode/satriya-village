@@ -1,0 +1,35 @@
+# Approved Design Direction — Satriya Village
+
+## Premise
+- First scenario: a custom village chief starting in a fictional Malang-area settlement around the political crisis of Tumapel in the early thirteenth century.
+- Ken Dedes / Ken Arok / Kadiri are historical-literary inspiration, with sources and creative invention distinguished in narrative docs.
+- Hybrid history: plausible historical line plus alternate outcomes; player can become vassal or independent monarch.
+- Tone: cute isometric pixel-art, Indonesian culture, whimsical mystical elements; accessible to young players.
+- Endgame vision: politically unify the fictionalized Nusantara world through multiple strategies; pilot limited to East Java.
+
+## Approved systems — future vision, not MVP promise
+- Landscape Android; Godot + GDScript.
+- Real-time pause / 1x / 2x / 3x; chapter-based optional time jumps.
+- Limited offline production; no offline war or major story event.
+- NPCs semi-autonomous. Named characters have traits, 6 stats and dynamic personality.
+- Village grid-building with managed workers; ordinary workers auto-assign, named characters can be assigned.
+- Semi-autonomous government with bounded spending authority.
+- Heavy consequences of defeat and potential return from exile.
+- Simple dynasty for pilot, deeper succession later.
+- Hybrid tactical battle with army types, commanders and skills.
+- Open-field battles in separate arenas; siege on settlement map.
+- Political intrigue, spying, covert operations, diplomacy.
+- Region/world map plus detailed settlements; settlements can be manually controlled or delegated.
+- Separate local storages with semi-automatic logistics.
+- Group-based ordinary citizen economy, richer named-character economy.
+- Advanced production chains, item quality; hybrid knowledge tree plus expert NPC requirements.
+- Optional gradual tutorial quests and living history world events.
+
+## Character stats (six)
+Leadership, Diplomacy, Strategy, Administration, Courage, Spirituality.
+
+## Monetization principle
+Optional rewarded ads may speed limited activities; core story/strategic play must be available without ads. Underage audience requires careful policy/compliance review before ad integration.
+
+## Design risk
+This is a large game for one beginner developer. Build vertical slices with strict scope and prototypes. Approval of a feature's vision does NOT imply it is scheduled for first release.
