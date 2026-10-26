@@ -61,3 +61,7 @@ The automated suite also verifies all four map-corner inverse transforms at thre
 M1 foundations are implemented, not the entire M1 milestone: save/load/autosave, touch/pinch, worker AI, character interaction, quest, politics, war, dynasty and economy recovery are not implemented. HUD remains in the presentation script; no broad UI rewrite. No push or merge. Human acceptance and final F5 visual checks remain outstanding.
 
 Next recommended implementation: after the F5 checklist, finalize and validate the versioned save contract, then implement safe save/load with round-trip and corruption tests.
+
+## Checkpoint provenance
+
+On resume, the working tree was clean and another concurrent operation had already included these implementation files in commit `d061cd5` (`design guide`), alongside planning/art documents. That commit was observed, not created by this implementation turn. Its history was preserved. A separate follow-up commit records verification and corrects the README status.

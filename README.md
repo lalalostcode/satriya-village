@@ -4,7 +4,7 @@ Implementasi 26 Oktober 2026: state desa, transaksi stok, definisi bangunan dan 
 
 Prototipe **belajar Godot + Codex** untuk Windows; bukan permainan lengkap atau build Play Store.
 
-**Status verifikasi:** audit gameplay M0/A02 **NOT TESTED**; langkah di bawah adalah cara mencoba prototype, bukan bukti fitur telah lolos. Perencanaan memakai baseline provisional reviewer (CONDITIONAL PASS), tanpa approval otomatis scope pilot/MVP. Mulai dokumentasi dari [Peta Dokumen](docs/DOCUMENT_INDEX.md), [PRD](docs/PRD.md) dan [Decision Register](docs/DECISION_REGISTER.md). [M0 Audit Plan](docs/M0_AUDIT_PLAN.md) menjelaskan bukti F5 yang masih diperlukan.
+**Status verifikasi (26 Oktober 2026):** import/parser PASS; 75 pemeriksaan model dan input viewport PASS; peluncuran Compatibility renderer PASS. Uji F5/interaksi GUI lengkap dan Android masih NOT TESTED. M0 belum dinyatakan diterima Director; lihat [hasil implementasi dan checklist manual](docs/IMPLEMENTATION_M0_M1.md). Perencanaan memakai baseline provisional reviewer (CONDITIONAL PASS), tanpa approval otomatis scope pilot/MVP. Mulai dokumentasi dari [Peta Dokumen](docs/DOCUMENT_INDEX.md), [PRD](docs/PRD.md) dan [Decision Register](docs/DECISION_REGISTER.md). [M0 Audit Plan](docs/M0_AUDIT_PLAN.md) menjelaskan bukti F5 yang masih diperlukan.
 
 ## Menjalankan (Windows)
 
