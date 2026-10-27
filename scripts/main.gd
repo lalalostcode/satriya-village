@@ -14,6 +14,8 @@ const Clock = preload("res://scripts/simulation/simulation_clock.gd")
 const SaveStore = preload("res://scripts/persistence/save_store.gd")
 const Autosave = preload("res://scripts/persistence/autosave_controller.gd")
 const Gestures = preload("res://scripts/presentation/world_gestures.gd")
+const Interactions = preload("res://scripts/characters/village_interactions.gd")
+const CharacterPanel = preload("res://scripts/presentation/character_panel.gd")
 var settlement := Settlement.new()
 var clock := Clock.new()
 var save_store := SaveStore.new()
@@ -41,6 +43,10 @@ var hud_footer: PanelContainer
 var farm_minus_button: Button
 var farm_plus_button: Button
 var farm_auto_button: Button
+var interactions := Interactions.new()
+var character_panel := CharacterPanel.new()
+var interaction_target: String = ""
+var interaction_action: String = ""
 
 
 func _ready() -> void:
@@ -88,11 +94,13 @@ func _draw() -> void:
             var tile_center := _cell_to_screen(cell)
             if settlement.buildings.has(cell):
                 _draw_building(tile_center, Catalog.DEFINITIONS[settlement.buildings[cell]].name)
-    # Decorative villagers are visual-only; no autonomous NPC simulation yet.
-    var pos_a := _cell_to_screen(Vector2i(5, 3)) + Vector2(sin(animation_time * 1.5) * 13.0, -8.0)
-    var pos_b := _cell_to_screen(Vector2i(2, 6)) + Vector2(cos(animation_time * 1.1) * 12.0, -5.0)
-    _draw_villager(pos_a, Color("#5d466d"))
-    _draw_villager(pos_b, Color("#b85f4e"))
+    # Individual interaction markers; drawings still do not drive worker production.
+    for id: String in Interactions.CHARACTERS:
+        var definition: Dictionary = Interactions.CHARACTERS[id]
+        var anchor: Vector2 = _cell_to_screen(definition.cell) + Vector2(0, -8)
+        _draw_villager(anchor, Color("#5d466d") if id == Interactions.OFFICIAL_ID else Color("#b85f4e"))
+        draw_rect(Rect2(anchor + Vector2(-23, -42), Vector2(46, 16)), Color("#35594c"))
+        draw_string(ThemeDB.fallback_font, anchor + Vector2(-19, -30), definition.label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
     var mouse_cell := _screen_to_cell(get_viewport().get_mouse_position())
     if _is_in_map(mouse_cell):
         _diamond(_cell_to_screen(mouse_cell), Color(1.0, 0.92, 0.42, 0.28), true)
@@ -155,6 +163,9 @@ func _is_in_map(cell: Vector2i) -> bool:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+    if character_panel.visible:
+        get_viewport().set_input_as_handled()
+        return
     # UI still receives emulated mouse events; world actions use raw touch only.
     if event.device == InputEvent.DEVICE_ID_EMULATION or not gestures.touches.is_empty() or not blocked_touches.is_empty():
         return
@@ -179,6 +190,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _place_at(position: Vector2) -> void:
+    if character_panel.visible:
+        return
+    var character_id: String = _character_at(position)
+    if not character_id.is_empty():
+        _open_character(character_id)
+        return
     var cell: Vector2i = _screen_to_cell(position)
     var id: String = Catalog.id_for_name(current_building)
     var result: String = settlement.try_place(id, cell)
@@ -200,6 +217,10 @@ func _input(event: InputEvent) -> void:
         panning = false
     if not app_active:
         return
+    if character_panel.visible and event.is_action_pressed("ui_cancel") and not event.is_echo():
+        _close_character()
+        get_viewport().set_input_as_handled()
+        return
     if event is InputEventScreenTouch:
         if event.pressed and (_over_hud(event.position) or not blocked_touches.is_empty()):
             blocked_touches[event.index] = true
@@ -220,7 +241,48 @@ func _input(event: InputEvent) -> void:
 
 
 func _over_hud(position: Vector2) -> bool:
-    return (is_instance_valid(hud_header) and hud_header.get_global_rect().has_point(position)) or (is_instance_valid(hud_footer) and hud_footer.get_global_rect().has_point(position))
+    return character_panel.visible or (is_instance_valid(hud_header) and hud_header.get_global_rect().has_point(position)) or (is_instance_valid(hud_footer) and hud_footer.get_global_rect().has_point(position))
+
+
+func _character_screen_position(id: String) -> Vector2:
+    var world: Vector2 = _cell_to_screen(Interactions.CHARACTERS[id].cell) + Vector2(0, -8)
+    return (world - CAMERA_CENTER) * camera_zoom + CAMERA_CENTER + camera_offset
+
+
+func _character_at(position: Vector2) -> String:
+    for id: String in Interactions.CHARACTERS:
+        if Rect2(_character_screen_position(id) + Vector2(-22, -32), Vector2(44, 44)).has_point(position):
+            return id
+    return ""
+
+
+func _open_character(id: String) -> void:
+    if not Interactions.CHARACTERS.has(id):
+        return
+    interaction_target = id
+    interaction_action = "identity" if id == Interactions.PLAYER_ID else "food_report"
+    _cancel_gestures()
+    _refresh_character_report()
+
+
+func _refresh_character_report() -> void:
+    var response: Dictionary = interactions.report(Interactions.PLAYER_ID, interaction_target, interaction_action, settlement, clock)
+    if response.ok:
+        character_panel.show_report(response)
+
+
+func _character_topic(action: String) -> void:
+    var response: Dictionary = interactions.report(Interactions.PLAYER_ID, interaction_target, action, settlement, clock)
+    if response.ok:
+        interaction_action = action
+        character_panel.show_report(response)
+
+
+func _close_character() -> void:
+    character_panel.hide()
+    interaction_target = ""
+    interaction_action = ""
+    _cancel_gestures()
 
 
 func _apply_gesture(command: Dictionary) -> void:
@@ -255,7 +317,7 @@ func _notification(what: int) -> void:
 
 
 func _save_before_close() -> bool:
-    _cancel_gestures()
+    _close_character()
     var result: Dictionary = autosave.flush(settlement, clock)
     _accept_autosave_result(result)
     if not result.is_empty() and not result.ok:
@@ -358,12 +420,21 @@ func _setup_hud() -> void:
             "Petani -": farm_minus_button = button
             "Petani +": farm_plus_button = button
             "Otomatis": farm_auto_button = button
+    var talk_button := Button.new()
+    talk_button.text = "Bicara: Laras"
+    talk_button.custom_minimum_size = Vector2(44, 44)
+    talk_button.add_to_group("interaction_controls")
+    talk_button.pressed.connect(_open_character.bind(Interactions.OFFICIAL_ID))
+    workers.add_child(talk_button)
     help_label = Label.new()
     help_label.tooltip_text = "Tap/klik: bangun | Geser jari/mouse tengah: kamera | Cubit/roda: zoom"
     workers.add_child(help_label)
     status_label = Label.new()
     status_label.text = "Selamat datang! Pilih bangunan, lalu klik petak kosong di desa."
     vertical.add_child(status_label)
+    layer.add_child(character_panel)
+    character_panel.topic_requested.connect(_character_topic)
+    character_panel.closed.connect(_close_character)
 
 
 func _select_building(kind: String) -> void:
@@ -410,6 +481,7 @@ func _load_game(backup: bool = false) -> void:
 
 func _apply_loaded(result: Dictionary) -> void:
     # Swap only after the entire snapshot has been parsed and validated.
+    _close_character()
     settlement = result.settlement
     clock = result.clock
     _cancel_gestures()
@@ -476,3 +548,5 @@ func _update_hud() -> void:
         farm_minus_button.disabled = workers.assigned == 0
         farm_plus_button.disabled = workers.assigned >= workers.capacity
         farm_auto_button.disabled = settlement.farm_worker_target == -1
+    if character_panel.visible:
+        _refresh_character_report()
