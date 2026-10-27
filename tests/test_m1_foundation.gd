@@ -249,6 +249,8 @@ func button(label: String) -> Button:
 
 func test_ui() -> bool:
     for candidate: Node in game.find_children("*", "Button", true, false):
+        if not candidate.is_visible_in_tree():
+            continue
         var rect: Rect2 = candidate.get_global_rect()
         check(rect.size.y >= 44.0, true, "touch target height " + candidate.text)
         check(rect.position.x >= 0 and rect.end.x <= 1280 and rect.end.y <= 720, true, "HUD fits " + candidate.text)

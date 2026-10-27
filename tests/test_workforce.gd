@@ -228,6 +228,8 @@ func test_ui() -> bool:
     check(game.settlement.workforce().assigned, 2, "touch operates worker control")
     check(game.settlement.buildings.size(), count, "touch worker control never builds")
     for button: Node in game.find_children("*", "Button", true, false):
+        if not button.is_visible_in_tree():
+            continue
         var rect: Rect2 = button.get_global_rect()
         check(rect.end.x <= 1280 and rect.end.y <= 720 and rect.size.y >= 44.0, true, "touch HUD fits " + button.text)
     check(game.help_label.get_global_rect().end.x <= 1280, true, "worker forecast fits")

@@ -14,7 +14,7 @@ const LINES: Dictionary = {
     "advice.no_fields": "Belum ada sawah. Bangun sawah jika kayu mencukupi, lalu alokasikan petani.",
     "advice.no_workers": "Belum ada petani yang bekerja. Periksa jumlah warga dan batas petani; sawah tanpa pekerja tidak menghasilkan panen.",
     "advice.unstaffed": "Sebagian tempat sawah belum terisi. Tambah batas petani atau gunakan Otomatis bila masih ada warga yang belum bekerja.",
-    "advice.shortage": "Pangan akan berkurang dengan penugasan sekarang. Tambah petani atau sawah sesuai tenaga kerja dan kayu yang tersedia.",
+    "advice.shortage": "Kebutuhan pangan belum terpenuhi. Periksa penugasan petani dan sawah; persediaan belum cukup untuk konsumsi penuh.",
     "advice.surplus": "Penugasan sekarang mencukupi kebutuhan pangan harian. Pantau persediaan saat mengubah penugasan.",
 }
 
@@ -42,11 +42,11 @@ func report(actor_id: String, target_id: String, action_id: String, settlement: 
                 advice = "advice.no_fields"
             elif workers.assigned == 0:
                 advice = "advice.no_workers"
-            elif food.net < 0 or food.unmet > 0:
-                advice = "advice.shortage"
             elif workers.assigned < workers.slots:
                 advice = "advice.unstaffed"
             text = greeting + "\n\n" + (LINES[line_id] % [settlement.stocks.food, workers.assigned, workers.slots, food.produced, food.consumed, food.unmet, food.net]) + "\n\n" + LINES[advice]
+            if food.unmet > 0:
+                text += "\n" + LINES["advice.shortage"]
         else:
             var policy: String = "Otomatis" if settlement.farm_worker_target == -1 else "Batas %d petani" % settlement.farm_worker_target
             text = greeting + "\n\n" + (LINES[line_id] % [settlement.population, workers.assigned, workers.idle, workers.slots, policy])

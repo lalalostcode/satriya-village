@@ -13,11 +13,13 @@ Press **F5** in Godot 4.7.2. Use **Bangun**, **Krisis pangan**, click an object,
 The following describes the preserved **legacy mechanics scene**, not the current F5 visual demo.
 # Satriya Village — Prototype 0.3
 
+27 Oktober 2026: scene simulasi kini memiliki interaksi **Laras, pejabat pertanian**. Buka `scenes/main.tscn`, tekan F6, lalu klik **Bicara: Laras** atau penanda Laras. Topik **Pangan/Pekerja** membaca kondisi desa saat ini; **Tutup/Esc** menutup panel. Penanda **Anda** membuka identitas kepala desa. Percakapan dapat dibuka saat pause atau berjalan dan tidak mengubah stok/penugasan. [Kontrak, hasil tes dan batas fitur](docs/M2_OFFICIAL_INTERACTION.md). Review visual F5 tetap terpisah.
+
 Implementasi 26 Oktober 2026: state desa, transaksi stok, definisi bangunan dan clock terpisah dari presentasi. Kamera mendukung drag mouse tengah/roda mouse serta touch tap/drag/pinch. Save/load manual, autosave terpisah, dan pemulihan cadangan tersedia. M2 kini memiliki pekerja agregat: sawah membutuhkan petani untuk menghasilkan pangan. Lihat [kontrak/tes pekerja M2](docs/M2_WORKFORCE_CONTRACT.md), [fondasi M1](docs/M1_FOUNDATION_VERIFICATION.md), dan [kontrak save v2](docs/SAVE_FORMAT.md).
 
 Prototipe **belajar Godot + Codex** untuk Windows; bukan permainan lengkap atau build Play Store.
 
-**Status verifikasi (26 Oktober 2026):** import/parser PASS; 406 assertion gameplay/persistence/touch/autosave/pekerja/migrasi/restart PASS; renderer Compatibility dan layout tombol 1280×720 PASS. Uji F5 manusia lengkap dan Android fisik masih NOT TESTED. Penerimaan milestone oleh Director tetap terpisah dari tes otomatis. Perencanaan memakai baseline provisional reviewer (CONDITIONAL PASS), tanpa approval otomatis scope pilot/MVP. Mulai dokumentasi dari [Peta Dokumen](docs/DOCUMENT_INDEX.md), [PRD](docs/PRD.md) dan [Decision Register](docs/DECISION_REGISTER.md).
+**Status verifikasi scene simulasi (27 Oktober 2026):** import/parser PASS; 471 assertion gameplay/persistence/touch/autosave/pekerja/interaksi PASS; renderer Compatibility dan layout panel 1280×720 PASS. Uji F6 manusia lengkap dan Android fisik masih NOT TESTED. Penerimaan milestone oleh Director tetap terpisah dari tes otomatis. Perencanaan memakai baseline provisional reviewer (CONDITIONAL PASS), tanpa approval otomatis scope pilot/MVP. Mulai dokumentasi dari [Peta Dokumen](docs/DOCUMENT_INDEX.md), [PRD](docs/PRD.md) dan [Decision Register](docs/DECISION_REGISTER.md).
 
 ## Menjalankan (Windows)
 
@@ -48,6 +50,7 @@ Prototipe **belajar Godot + Codex** untuk Windows; bukan permainan lengkap atau 
 - Autosave terpisah, perlindungan simpanan sesi sebelumnya, retry terjadwal, dan penghentian simulasi saat aplikasi berada di background.
 - Kamera mouse/touch, tap versus drag/pinch, serta tombol setinggi minimum 44 unit desain.
 - Pekerja pertanian agregat, batas manual/otomatis, produksi sesuai tenaga kerja, dan laporan pangan harian. Ini belum AI gerak NPC individual.
+- Interaksi baca-saja dengan Laras serta identitas kepala desa melalui panel yang sama; laporan mengikuti hari, stok, pekerja dan save yang dimuat.
 - NPC yang **hanya animasi dekoratif** (AI NPC belum dibuat).
 - Instruksi `AGENTS.md` untuk Codex dan roadmap pengembangan.
 
