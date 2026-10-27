@@ -52,6 +52,7 @@ var interaction_action: String = ""
 func _ready() -> void:
     get_tree().auto_accept_quit = false
     _setup_hud()
+    character_panel.quest_choice_requested.connect(_quest_choice)
     _update_hud()
     autosave.prime(settlement, clock)
     _update_autosave_controls()
@@ -64,11 +65,17 @@ func _process(delta: float) -> void:
         return
     animation_time += delta * clock.speed
     var days: int = clock.advance(delta)
+    var guidance_ready: bool = false
     for i in days:
         settlement.advance_day()
+        var previous_quest_state: String = settlement.food_quest.state
+        settlement.food_quest.observe_day(clock.day - days + i + 1, settlement.last_day_report)
+        guidance_ready = guidance_ready or (previous_quest_state == "active" and settlement.food_quest.state == "ready")
     if days > 0:
         var report: Dictionary = settlement.last_day_report
         status_label.text = "Hari %d: panen +%d, konsumsi %d, kurang %d; pangan bersih %+d." % [clock.day, report.produced, report.consumed, report.unmet, report.net]
+        if guidance_ready:
+            status_label.text += " Panduan: laporkan panen kepada Laras."
         _update_hud()
     _accept_autosave_result(autosave.advance(delta, settlement, clock))
     queue_redraw()
@@ -276,6 +283,15 @@ func _character_topic(action: String) -> void:
     if response.ok:
         interaction_action = action
         character_panel.show_report(response)
+
+
+func _quest_choice(choice_id: String) -> void:
+    if interaction_target != Interactions.OFFICIAL_ID or interaction_action != "food_guidance":
+        return
+    var result: Dictionary = settlement.food_quest.choose(choice_id, clock.day)
+    if not result.ok:
+        status_label.text = "Pilihan panduan tidak tersedia. Periksa keadaan terbaru."
+    _refresh_character_report()
 
 
 func _close_character() -> void:

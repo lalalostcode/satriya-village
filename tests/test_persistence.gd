@@ -97,7 +97,7 @@ func test_validation() -> bool:
     var cases: Array = []
     for value: Variant in [null, [], "data", 42, true]:
         cases.append(value)
-    for value: Variant in [3, 0, 1.5, true, "2"]:
+    for value: Variant in [5, 0, 1.5, true, "2"]:
         var data := base.duplicate(true)
         data.schema_version = value
         cases.append(data)
@@ -138,7 +138,7 @@ func test_validation() -> bool:
         store._write_text(store.path, text)
         check(store.load_game().ok, false, "empty/truncated/wrong root rejected")
     var future := base.duplicate(true)
-    future.schema_version = 3
+    future.schema_version = 5
     var future_text := JSON.stringify(future)
     store._write_text(store.path, future_text)
     check(store.save_game(Settlement.new(), Clock.new()).error, "protected_save", "newer primary protected")

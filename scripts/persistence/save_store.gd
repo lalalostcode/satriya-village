@@ -34,6 +34,10 @@ func capture(settlement: RefCounted, clock: RefCounted) -> Dictionary:
         snapshot.settlement.initial_buildings = []
         for cell: Vector2i in settlement.initial_buildings:
             snapshot.settlement.initial_buildings.append({"x": cell.x,"y": cell.y})
+    if not settlement.food_quest.is_pristine():
+        return {"schema_version": 4, "content_version": "food-guidance-1",
+            "saved_at_utc": snapshot.saved_at_utc, "village": snapshot,
+            "food_quest": settlement.food_quest.capture()}
     return snapshot
 
 
@@ -57,6 +61,24 @@ func _integer(value: Variant, low: int, high: int) -> bool:
 func validate(data: Variant) -> Dictionary:
     if not data is Dictionary:
         return _failure("format")
+    if _integer(data.get("schema_version"), 4, 4):
+        if data.get("content_version") != "food-guidance-1":
+            return _failure("content")
+        if not _keys(data, ["schema_version", "content_version", "saved_at_utc", "village", "food_quest"]):
+            return _failure("fields")
+        if not _integer(data.saved_at_utc, 0, 9999999999):
+            return _failure("timestamp")
+        if not data.village is Dictionary or not _integer(data.village.get("schema_version"), 1, 3):
+            return _failure("version")
+        var village := validate(data.village)
+        if not village.ok:
+            return village
+        var quest: RefCounted = Settlement.FoodGuidance.restore(data.food_quest, village.clock.day)
+        if quest == null:
+            return _failure("quest")
+        village.settlement.food_quest = quest
+        village.data = data
+        return village
     if not _integer(data.get("schema_version"), 1, 3):
         return _failure("version")
     var content: String = "prototype-1" if data.schema_version == 1 else "prototype-2"

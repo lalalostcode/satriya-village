@@ -13,6 +13,8 @@ func _init(save_path: String = "user://saves/village-autosave.json") -> void:
 func _domain(settlement: RefCounted, clock: RefCounted) -> Dictionary:
     var snapshot: Dictionary = store.capture(settlement, clock)
     snapshot.erase("saved_at_utc")
+    if snapshot.has("village"):
+        snapshot.village.erase("saved_at_utc") # Quest envelope metadata is not a domain change.
     return snapshot
 
 func prime(settlement: RefCounted, clock: RefCounted) -> void:

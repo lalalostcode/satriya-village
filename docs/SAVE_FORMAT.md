@@ -1,5 +1,9 @@
 # Satriya Village — Save Format v2 (v1 migration supported)
 
+## Current optional quest envelope — schema v4 (27 October 2026)
+
+The [food-guidance contract](M2_FOOD_QUEST.md) adds an optional envelope after a quest choice. A pristine offered quest still uses the existing strict legacy v2 or visual v3 snapshot; missing quest data means offered. Changed quest state writes v4/content `food-guidance-1` with exactly `schema_version`, `content_version`, `saved_at_utc`, `village` (supported non-v4 village snapshot) and `food_quest`. The six quest fields and history/resolution invariants are defined in the contract. Village and quest are validated/staged/published together through the existing store. There are no sidecar writes. Loading v1/v2/v3 creates offered guidance without modifying source bytes; v4 restores the exact stage/outcome without reapplying a resolution. Unknown future versions, nested envelopes and inconsistent quest history are rejected. Other schema sections below remain the nested village format references.
+
 ## Current M2 contract — schema v2
 
 The [aggregate-workforce contract](M2_WORKFORCE_CONTRACT.md) extends the current payload to schema 2/content `prototype-2` with `settlement.farm_worker_target` (-1 automatic, otherwise integer 0..population). All v1 paths, integrity/recovery and autosave policies remain in force. Strict v1/prototype-1 files migrate on a copy to automatic allocation and pass complete v2 validation; load does not rewrite the original file. Unknown future versions/content remain protected. Derived assignments and daily reports are not serialized. The v1 section below is the previous schema reference, superseded only where this extension says so.

@@ -1,5 +1,6 @@
 extends RefCounted
 const Catalog = preload("res://scripts/simulation/building_catalog.gd")
+const FoodGuidance = preload("res://scripts/narrative/food_guidance.gd")
 const Layout = preload("res://scripts/simulation/village_layout.gd")
 var layout := Layout.new()
 var layout_id: String = "legacy"
@@ -15,6 +16,7 @@ var stocks: Dictionary = {"wood": 120, "food": 60, "coins": 150}
 var population: int = 8
 var farm_worker_target: int = -1 # -1 = automatic allocation; otherwise a manual cap.
 var last_day_report: Dictionary = {}
+var food_quest := FoodGuidance.new()
 
 func contains(cell: Vector2i) -> bool:
     var extent: Vector2i = Layout.SIZE if layout_id == Layout.ID else Vector2i(WIDTH,HEIGHT)

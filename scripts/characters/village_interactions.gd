@@ -4,7 +4,7 @@ const PLAYER_ID: String = "village_chief"
 const OFFICIAL_ID: String = "agriculture_official"
 const CHARACTERS: Dictionary = {
     PLAYER_ID: {"name": "Kepala desa (Anda)", "role": "Pemimpin desa", "label": "Anda", "cell": Vector2i(2, 6), "actions": ["identity"]},
-    OFFICIAL_ID: {"name": "Laras", "role": "Pejabat pertanian", "label": "Laras", "cell": Vector2i(5, 3), "actions": ["food_report", "workforce_report"]},
+    OFFICIAL_ID: {"name": "Laras", "role": "Pejabat pertanian", "label": "Laras", "cell": Vector2i(5, 3), "actions": ["food_report", "workforce_report", "food_guidance"]},
 }
 const LINES: Dictionary = {
     "chief.identity": "Anda adalah kepala desa. Tentukan pembangunan dan batas petani melalui tombol desa. Laras dapat menjelaskan kondisi pangan dan tenaga kerja.\n\nPenanda tokoh tidak menambah jumlah warga atau pekerja.",
@@ -26,6 +26,11 @@ func report(actor_id: String, target_id: String, action_id: String, settlement: 
     var character: Dictionary = CHARACTERS[target_id]
     if action_id not in character.actions:
         return {"ok": false, "error": "invalid_action"}
+    if action_id == "food_guidance":
+        var guidance: Dictionary = settlement.food_quest.describe(settlement)
+        return {"ok": true, "speaker_id": target_id, "name": character.name,
+            "role": character.role + " / " + guidance.title, "action_id": action_id,
+            "line_id": "official.food_guidance", "text": guidance.text, "choices": guidance.choices}
     var text: String
     var line_id: String
     if action_id == "identity":

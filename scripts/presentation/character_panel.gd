@@ -1,13 +1,18 @@
 extends Control
 ## One panel for chief identity and the official's current reports.
 signal topic_requested(action_id: String)
+signal quest_choice_requested(choice_id: String)
 signal closed
+const QuestDefinition = preload("res://data/quests/food_guidance.gd")
 var title_label: Label
 var role_label: Label
 var body_label: Label
 var food_button: Button
 var workers_button: Button
 var close_button: Button
+var guidance_button: Button
+var choice_row: HBoxContainer
+var choice_buttons: Dictionary = {}
 var card: PanelContainer
 
 func _ready() -> void:
@@ -37,6 +42,14 @@ func _ready() -> void:
     body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     body_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
     column.add_child(body_label)
+    choice_row = HBoxContainer.new()
+    choice_row.add_theme_constant_override("separation", 12)
+    column.add_child(choice_row)
+    for id: String in QuestDefinition.DEFINITION.choices:
+        var button := _button(QuestDefinition.DEFINITION.choices[id].label, choice_row)
+        button.pressed.connect(func() -> void: quest_choice_requested.emit(id))
+        choice_buttons[id] = button
+    choice_row.hide()
     var actions := HBoxContainer.new()
     actions.add_theme_constant_override("separation", 12)
     column.add_child(actions)
@@ -44,6 +57,8 @@ func _ready() -> void:
     food_button.pressed.connect(func() -> void: topic_requested.emit("food_report"))
     workers_button = _button("Pekerja", actions)
     workers_button.pressed.connect(func() -> void: topic_requested.emit("workforce_report"))
+    guidance_button = _button("Panduan", actions)
+    guidance_button.pressed.connect(func() -> void: topic_requested.emit("food_guidance"))
     var spacer := Control.new()
     spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     actions.add_child(spacer)
@@ -67,6 +82,14 @@ func show_report(response: Dictionary) -> void:
     var official: bool = response.action_id != "identity"
     food_button.visible = official
     workers_button.visible = official
+    guidance_button.visible = official
+    var choices: Array = response.get("choices", [])
+    choice_row.visible = not choices.is_empty()
+    for id: String in choice_buttons:
+        choice_buttons[id].hide()
+    for choice: Dictionary in choices:
+        if choice_buttons.has(choice.id):
+            choice_buttons[choice.id].show()
     show()
     if not was_visible:
         close_button.grab_focus()
