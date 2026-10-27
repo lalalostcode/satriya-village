@@ -1,4 +1,4 @@
-# Satriya Village — Save Format v2 (v1 migration supported)
+# Satriya Village — Village formats v1–v3 and quest envelope v4
 
 ## Current optional quest envelope — schema v4 (27 October 2026)
 

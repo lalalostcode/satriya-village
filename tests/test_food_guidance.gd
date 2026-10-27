@@ -80,6 +80,11 @@ func test_model() -> bool:
     check(declined.state, "declined", "declined guidance never auto-completes")
     check(declined.choose("accept", 2).ok, false, "no reactivation after opt-out")
     check(Quest.restore(declined.capture(), 2).state, "declined", "declined state validates")
+    var later := Quest.new()
+    later.choose("accept", 3)
+    later.observe_day(4, {"workers":0, "produced":0, "consumed":0, "unmet":3})
+    later.choose("decline", 4)
+    check(Quest.restore(later.capture(),4).state,"declined","active guidance can also be declined and saved")
     return true
 
 func test_validation_and_save() -> bool:
@@ -117,7 +122,7 @@ func test_validation_and_save() -> bool:
     check(store.validate(saved).ok, true, "valid v4")
     check(saved, original, "validation never mutates source")
     var cases: Array = []
-    for change: Dictionary in [{"id": "unknown"}, {"state": "unknown"}, {"resolution_id": ""}, {"harvest_day": 1}, {"observed_day": 3}, {"accepted_day": true}, {"harvest_day": 1.5}]:
+    for change: Dictionary in [{"id": "unknown"}, {"state": "unknown"}, {"state":"offered"}, {"state":"active"}, {"state":"declined"}, {"resolution_id": ""}, {"harvest_day": 1}, {"observed_day": 3}, {"accepted_day": true}, {"harvest_day": 1.5}]:
         var bad := saved.duplicate(true)
         bad.food_quest.merge(change, true)
         cases.append(bad)
@@ -234,6 +239,15 @@ func test_ui() -> bool:
     game._save_game()
     game._load_game()
     check(game.settlement.food_quest.state, "completed", "UI save/load retains result")
+    var held_model: RefCounted = game.settlement
+    var valid: Dictionary = game.save_store.capture(game.settlement,game.clock)
+    var broken: Dictionary = valid.duplicate(true)
+    broken.food_quest.resolution_id = ""
+    game.save_store._write_text(game.save_store.path,JSON.stringify(broken))
+    game._load_game()
+    check(game.settlement,held_model,"invalid quest history does not replace live session")
+    check(game.settlement.food_quest.state,"completed","failed load does not reset resolution")
+    game.save_store._write_text(game.save_store.path,JSON.stringify(valid))
     game._open_character(game.Interactions.OFFICIAL_ID)
     game._character_topic("food_guidance")
     await process_frame
@@ -264,7 +278,7 @@ func test_visual_session() -> bool:
     scene.session.autosave = Autosave.new(directory + "/visual-auto.json")
     scene.session.autosave.enabled = false
     scene.session.save_store = Store.new(directory + "/visual.json")
-    scene.session.clock.speed = 0
+    scene.session._set_speed(0)
     scene.session.app_active = true
     await process_frame
     await process_frame
@@ -273,6 +287,10 @@ func test_visual_session() -> bool:
     session._character_topic("food_guidance")
     await process_frame
     await process_frame
+    check(session.character_panel.card.get_global_rect().end.y <= 720,true,"offered F5 quest fits")
+    if OS.get_cmdline_user_args().has("--render-smoke"):
+        DirAccess.make_dir_recursive_absolute("res://.godot/food-quest-tests")
+        check(root.get_texture().get_image().save_png("res://.godot/food-quest-tests/quest-offered.png"),OK,"rendered offered quest capture")
     mouse(session.character_panel.choice_buttons.accept)
     check(session.settlement.food_quest.state, "active", "F5 session shares quest command")
     session._close_character()
@@ -296,6 +314,8 @@ func test_visual_session() -> bool:
     session._character_topic("food_guidance")
     await process_frame
     await process_frame
+    check(session.character_panel.card.get_global_rect().end.y <= 720,true,"completed F5 quest fits")
+    check(session.character_panel.body_label.get_minimum_size().y <= session.character_panel.body_label.size.y,true,"completed F5 quest text fits")
     if OS.get_cmdline_user_args().has("--render-smoke"):
         DirAccess.make_dir_recursive_absolute("res://.godot/food-quest-tests")
         check(root.get_texture().get_image().save_png("res://.godot/food-quest-tests/quest-ui.png"), OK, "rendered F5 quest capture")
