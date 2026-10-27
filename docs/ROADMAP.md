@@ -68,3 +68,7 @@ These are retained vision requirements, not removed by a one-village slice. Acti
 | Nusantara political unification through multiple strategies — DECISIONS Premise | Expansion after multi-region politics, economy, logistics, content and Android capacity are demonstrated |
 
 At every scope review, keep deferred requirements linked to their source and gate. Before implementation, settle the relevant decisions; feature vision alone does not authorize engineering.
+
+## Current priority update — 27 October 2026: integration delivered
+
+The Director's latest instruction supersedes the earlier visual-only gate and F5/F6 split. F5 now combines Nusantara sprites with existing simulation, footprint placement, workers, reports and safe save/load. HUD was verified before placement integration; [evidence, manual checklist and limitations](VISUAL_GAMEPLAY_INTEGRATION.md) record the results. No additional M2 quest/economy or M3 systems were introduced. Next is human F5 acceptance and physical Android validation, not automatic expansion of the roadmap.

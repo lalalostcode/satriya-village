@@ -11,6 +11,8 @@ func run() -> void:
 	root.size = Vector2i(1280,720)
 	var scene = load("res://scenes/visual_village.tscn").instantiate()
 	root.add_child(scene)
+	scene.session.autosave.enabled = false
+	scene.session._set_speed(0)
 	await process_frame
 	await process_frame
 	check(not scene.info_panel.visible and not scene.build_panel.visible,"Panels hidden on startup")
@@ -44,9 +46,8 @@ func run() -> void:
 	check(scene.world.roads.has(Vector2i(9,16)) and not scene.world.blocked.has(Vector2i(9,16)),"Gateway center remains a walkable road cell")
 	check(scene.world.blocked.has(Vector2i(8,16)) and scene.world.blocked.has(Vector2i(10,16)),"Gateway outer cells contain pillars")
 	scene.preview_build("house","Rumah")
-	check(scene.world.selected >= 0 and scene.info_panel.visible,"Build preview")
-	scene.show_quest()
-	check(scene.info.get_child(0).text == "Cadangan menipis","Quest mockup")
+	check(scene.preview_kind == "house" and not scene.info_panel.visible,"Placement mode uses catalog ID")
+	scene.cancel_build()
 	scene.set_zoom(8)
 	check(scene.zoom_level == 1.5,"Zoom limit")
 	scene.reset_view()
@@ -74,7 +75,8 @@ func run() -> void:
 	Input.parse_input_event(click)
 	await process_frame
 	check(scene.world.selected >= 0,"Actual viewport mouse selection")
-	check(scene.info.get_child(0).text.contains("Raras"),"Character detail from click")
+	check(scene.session.character_panel.visible and scene.session.character_panel.title_label.text.contains("Anda"),"Live character detail from click")
+	scene.session._close_character()
 	# A gap in the gate artwork must select through; both opaque pillars map to one object.
 	scene.select_kind("gate")
 	var gate_index: int = scene.world.selected
@@ -89,11 +91,11 @@ func run() -> void:
 	await process_frame
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
-		check(root.get_texture().get_image().save_png("res://docs/screenshots/proportion_after.png") == OK,"Proportion AFTER screenshot saved")
+		check(root.get_texture().get_image().save_png("res://docs/screenshots/integration_village.png") == OK,"Proportion AFTER screenshot saved")
 		scene.world.show_footprints = true
 		scene.world.queue_redraw()
 		await process_frame
 		await RenderingServer.frame_post_draw
-		check(root.get_texture().get_image().save_png("res://docs/screenshots/footprints_overlay.png") == OK,"Footprint overlay screenshot saved")
+		check(root.get_texture().get_image().save_png("res://docs/screenshots/integration_footprints.png") == OK,"Footprint overlay screenshot saved")
 	print("VISUAL SMOKE FAILURES: ",failures)
 	quit(failures)

@@ -49,3 +49,7 @@ This is a large game for one beginner developer. Build vertical slices with stri
 ## Confirmed visual proportion baseline — 27 October 2026
 
 Direct Game Director instruction approves the current Nusantara pixel-art direction, while requiring scale/layout revision. The [Proporsi & Footprint rules](PROPORTIONS_FOOTPRINTS.md) capture the explicit initial baseline: visual tile 48×24, house/granary/minimum paddy 2×2, paddy variants 3×2/4×4, gate 3×1 with walkable center or large 3×2, pendopo 3×3 or main 4×4, important buildings at least one tier larger, main road and default gap 1 tile, sprite overhang allowed. This confirms direction and baseline, not individual historical claims, final composition acceptance or new mechanics scope.
+
+## Active integration update — 27 October 2026
+
+The Director explicitly authorized gradual visual/gameplay integration after the proportion baseline. The visual scene is now the playable F5 entry point using existing settlement, clock, inventory, workforce, character reports and persistence. This supersedes earlier visual-only/F6 separation statements. No new politics, dynasty, combat, economy or quest system is authorized by this integration. See [integration evidence and limitations](VISUAL_GAMEPLAY_INTEGRATION.md); human and Android acceptance remain outstanding.

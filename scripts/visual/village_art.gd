@@ -1,8 +1,13 @@
 extends Node2D
-## Presentation footprints and PNG sprites. No simulation placement or navigation changes.
+## Derived sprite view; shared layout supplies footprint geometry.
 const MANIFEST := "res://assets/visual/sprite_manifest.json"
 const RULES := "res://assets/visual/footprint_rules.json"
-const MAP_SIZE := Vector2i(20,20)
+const Layout = preload("res://scripts/simulation/village_layout.gd")
+var map_size := Vector2i(20,20)
+var layout := Layout.new()
+var scenery: Array[Dictionary] = []
+var preview_cells: Array[Vector2i] = []
+var preview_valid: bool = false
 var tile_half := Vector2(12,6)
 var objects: Array[Dictionary] = []
 var sprites: Array[Sprite2D] = []
@@ -28,8 +33,8 @@ func _ready() -> void:
 		plot("granary",11,12,"Lumbung panggung"),plot("gate",8,16,"Gapura desa · 3×1"),
 		plot("field",14,7,"Sawah timur"),plot("field",17,7,"Petak padi"),
 		plot("field",14,10,"Sawah irigasi"),plot("field",17,10,"Sawah hijau"),
-		item("bridge",9,18,"Jembatan kayu"),item("leader",8.7,11.4,"Raras · Kepala desa"),
-		item("farmer",13,9,"Sari · Petani"),item("farmer",17.2,12.3,"Jaya · Petani"),
+		item("bridge",9,18,"Jembatan kayu"),item("leader",8.7,11.4,"Kepala desa (Anda)"),
+		item("farmer",13,9,"Laras · Pejabat pertanian"),item("farmer",17.2,12.3,"Jaya · Petani"),
 		item("citizen",4,11.5,"Wening · Warga"),item("citizen",9,6,"Banu · Warga")]
 	for cell in [Vector2(0.5,3),Vector2(0,8),Vector2(0.4,13),Vector2(4,1),Vector2(8,1),Vector2(13,1),Vector2(17,3),Vector2(19,6),Vector2(19,17),Vector2(15,16.5),Vector2(4,18),Vector2(1,17)]:
 		objects.append(item("tree",cell.x,cell.y,"Pohon tropis"))
@@ -44,6 +49,16 @@ func _ready() -> void:
 	for cell in [Vector2(1.2,8),Vector2(1.5,12.5),Vector2(3,13.2),Vector2(10,3.3),Vector2(11.5,3.3),Vector2(13.5,14)]:
 		objects.append(item("fence",cell.x,cell.y,"Pagar bambu"))
 	_build_ground_plan()
+	scenery = objects.duplicate(true)
+	rebuild_sprites()
+
+func rebuild_sprites() -> void:
+	for sprite in sprites: sprite.free()
+	for entry in extra_sprites: entry.sprite.free()
+	sprites.clear()
+	extra_sprites.clear()
+	blocked.clear()
+	selected = -1
 	objects.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return iso(a.cell).y < iso(b.cell).y)
 	for i in range(objects.size()):
 		var obj: Dictionary = objects[i]
@@ -121,18 +136,8 @@ func _create_gate(index: int) -> void:
 		else: extra_sprites.append({"sprite":sprite,"owner":index})
 
 func _build_ground_plan() -> void:
-	# Exactly one-cell-wide main street passes through the middle gate column.
-	for y in range(3,20): roads[Vector2i(9,y)] = true
-	for y in range(8,16): roads[Vector2i(4,y)] = true
-	for x in range(4,10): roads[Vector2i(x,12)] = true
-	for x in range(4,10): roads[Vector2i(x,9)] = true
-	for x in range(9,19): roads[Vector2i(x,9)] = true
-	for x in range(9,14): roads[Vector2i(x,14)] = true
-	for x in range(20): water[Vector2i(x,18)] = true
-	for y in range(6,14): water[Vector2i(16,y)] = true
-	for x in range(13,20): water[Vector2i(x,12)] = true
-	# Farm access crosses the irrigation ditch on a small earth bank.
-	water.erase(Vector2i(16,9))
+	roads = layout.roads
+	water = layout.water
 
 func _process(delta: float) -> void:
 	if not animate: return
@@ -145,9 +150,8 @@ func diamond_points(p: Vector2,half: Vector2) -> PackedVector2Array:
 	return PackedVector2Array([p+Vector2(0,-half.y),p+Vector2(half.x,0),p+Vector2(0,half.y),p+Vector2(-half.x,0),p+Vector2(0,-half.y)])
 
 func _draw() -> void:
-	for y in range(MAP_SIZE.y):
-		for x in range(MAP_SIZE.x):
-			if x+y<3 or x+y>36 or absi(x-y)>17: continue
+	for y in range(map_size.y):
+		for x in range(map_size.x):
 			var cell := Vector2i(x,y)
 			var p := iso(Vector2(cell))
 			var color := Color("7b9f52")
@@ -167,6 +171,9 @@ func _draw() -> void:
 				if objects[i].kind == "gate" and cell.x == objects[i].origin.x+1: color = Color("a8e6de")
 				draw_polyline(diamond_points(iso(Vector2(cell)),tile_half),color,1)
 
+	for cell in preview_cells:
+		draw_colored_polygon(diamond_points(iso(Vector2(cell)),tile_half),Color(0.3,1,0.4,0.55) if preview_valid else Color(1,0.2,0.15,0.6))
+
 func hits_sprite(sprite: Sprite2D,local: Vector2) -> bool:
 	var p := local-sprite.position-sprite.offset
 	var image := sprite.texture.get_image()
@@ -185,3 +192,23 @@ func pick(local: Vector2) -> int:
 			best = entry.owner
 			depth = entry.sprite.z_index
 	return best
+
+func sync_settlement(model: RefCounted) -> void:
+	map_size = Layout.SIZE
+	objects.clear()
+	for obj: Dictionary in scenery:
+		if obj.kind in ["house","field","granary"]: continue
+		# Small scenery is dressing, removed from the view where an active building stands.
+		var covered := false
+		if not obj.has("origin") and obj.kind not in ["leader","farmer","citizen","bridge"]:
+			for origin: Vector2i in model.buildings:
+				if Rect2(Vector2(origin)-Vector2(0.5,0.5),Vector2(layout.footprint(model.buildings[origin]))).has_point(obj.cell): covered = true
+		if not covered: objects.append(obj.duplicate(true))
+	for origin: Vector2i in model.buildings:
+		var id: String = model.buildings[origin]
+		var obj := plot(layout.art_kind(id),origin.x,origin.y,model.Catalog.DEFINITIONS[id].name)
+		obj.model_id = id
+		obj.initial = origin in model.initial_buildings
+		objects.append(obj)
+	rebuild_sprites()
+	queue_redraw()

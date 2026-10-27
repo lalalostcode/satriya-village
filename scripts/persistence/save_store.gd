@@ -14,7 +14,7 @@ func capture(settlement: RefCounted, clock: RefCounted) -> Dictionary:
     var buildings: Array = []
     for cell: Vector2i in settlement.buildings:
         buildings.append({"id": settlement.buildings[cell], "x": cell.x, "y": cell.y})
-    return {
+    var snapshot: Dictionary = {
         "schema_version": 2, "content_version": "prototype-2",
         "saved_at_utc": int(Time.get_unix_time_from_system()),
         "clock": {"day": clock.day, "elapsed": clock.elapsed, "speed": clock.speed},
@@ -25,6 +25,17 @@ func capture(settlement: RefCounted, clock: RefCounted) -> Dictionary:
             "buildings": buildings,
         },
     }
+    if settlement.layout_id == settlement.Layout.ID:
+        snapshot.schema_version = 3
+        snapshot.content_version = "visual-1"
+        snapshot.settlement.layout = settlement.layout_id
+        snapshot.settlement.width = settlement.Layout.SIZE.x
+        snapshot.settlement.height = settlement.Layout.SIZE.y
+        snapshot.settlement.initial_buildings = []
+        for cell: Vector2i in settlement.initial_buildings:
+            snapshot.settlement.initial_buildings.append({"x": cell.x,"y": cell.y})
+    return snapshot
+
 
 func _failure(reason: String) -> Dictionary:
     return {"ok": false, "error": reason}
@@ -46,9 +57,11 @@ func _integer(value: Variant, low: int, high: int) -> bool:
 func validate(data: Variant) -> Dictionary:
     if not data is Dictionary:
         return _failure("format")
-    if not _integer(data.get("schema_version"), 1, 2):
+    if not _integer(data.get("schema_version"), 1, 3):
         return _failure("version")
     var content: String = "prototype-1" if data.schema_version == 1 else "prototype-2"
+    var visual: bool = data.schema_version == 3
+    if visual: content = "visual-1"
     if data.get("content_version") != content:
         return _failure("content")
     if not _keys(data, ["schema_version", "content_version", "saved_at_utc", "clock", "settlement"]):
@@ -71,9 +84,13 @@ func validate(data: Variant) -> Dictionary:
     if c.elapsed < 0.0 or c.elapsed >= Clock.SECONDS_PER_DAY or not _integer(c.speed, 0, 3):
         return _failure("clock")
     var s: Variant = data.settlement
-    if not _keys(s, ["id", "width", "height", "population", "stocks", "buildings", "farm_worker_target"]):
+    var fields := ["id", "width", "height", "population", "stocks", "buildings", "farm_worker_target"]
+    if visual: fields.append_array(["layout", "initial_buildings"])
+    if not _keys(s, fields):
         return _failure("settlement")
-    if s.id != "village-1" or not _integer(s.width, 10, 10) or not _integer(s.height, 10, 10):
+    var extent: int = 40 if visual else 10
+    if visual and s.layout != Settlement.Layout.ID: return _failure("map")
+    if s.id != "village-1" or not _integer(s.width, extent, extent) or not _integer(s.height, extent, extent):
         return _failure("map")
     if not _integer(s.population, 0, MAX_VALUE) or not _keys(s.stocks, ["wood", "food", "coins"]):
         return _failure("inventory")
@@ -82,7 +99,7 @@ func validate(data: Variant) -> Dictionary:
     for value: Variant in s.stocks.values():
         if not _integer(value, 0, MAX_VALUE):
             return _failure("inventory")
-    if not s.buildings is Array or s.buildings.size() > 100:
+    if not s.buildings is Array or s.buildings.size() > (400 if visual else 100):
         return _failure("buildings")
     var model := Settlement.new()
     model.buildings.clear()
@@ -91,12 +108,23 @@ func validate(data: Variant) -> Dictionary:
             return _failure("building")
         if not building.id is String or not Catalog.DEFINITIONS.has(building.id):
             return _failure("building_id")
-        if not _integer(building.x, 0, 9) or not _integer(building.y, 0, 9):
+        if not _integer(building.x, 0, extent-1) or not _integer(building.y, 0, extent-1):
             return _failure("cell")
         var cell := Vector2i(int(building.x), int(building.y))
         if model.buildings.has(cell):
             return _failure("duplicate_cell")
+        if visual and model.layout.validate_placement(building.id,cell,model.buildings) != "ok":
+            return _failure("footprint")
         model.buildings[cell] = building.id
+    if visual:
+        model.layout_id = Settlement.Layout.ID
+        if not s.initial_buildings is Array or s.initial_buildings.size() > s.buildings.size(): return _failure("initial")
+        for entry: Variant in s.initial_buildings:
+            if not _keys(entry,["x","y"]): return _failure("initial")
+            if not _integer(entry.x,0,extent-1) or not _integer(entry.y,0,extent-1): return _failure("initial")
+            var cell := Vector2i(int(entry.x),int(entry.y))
+            if not model.buildings.has(cell) or cell in model.initial_buildings: return _failure("initial")
+            model.initial_buildings.append(cell)
     for key: String in s.stocks:
         model.stocks[key] = int(s.stocks[key])
     model.population = int(s.population)

@@ -1,5 +1,9 @@
 extends RefCounted
 const Catalog = preload("res://scripts/simulation/building_catalog.gd")
+const Layout = preload("res://scripts/simulation/village_layout.gd")
+var layout := Layout.new()
+var layout_id: String = "legacy"
+var initial_buildings: Array = []
 const WIDTH: int = 10
 const HEIGHT: int = 10
 var buildings: Dictionary = {
@@ -13,7 +17,8 @@ var farm_worker_target: int = -1 # -1 = automatic allocation; otherwise a manual
 var last_day_report: Dictionary = {}
 
 func contains(cell: Vector2i) -> bool:
-    return cell.x >= 0 and cell.x < WIDTH and cell.y >= 0 and cell.y < HEIGHT
+    var extent: Vector2i = Layout.SIZE if layout_id == Layout.ID else Vector2i(WIDTH,HEIGHT)
+    return cell.x >= 0 and cell.x < extent.x and cell.y >= 0 and cell.y < extent.y
 
 func transact(changes: Dictionary) -> bool:
     # Validate the whole transaction before changing any stock.
@@ -31,7 +36,10 @@ func try_place(id: String, cell: Vector2i) -> String:
         return "unknown_building"
     if not contains(cell):
         return "outside_map"
-    if buildings.has(cell):
+    if layout_id == Layout.ID:
+        var spatial: String = layout.validate_placement(id,cell,buildings)
+        if spatial != "ok": return spatial
+    elif buildings.has(cell):
         return "occupied"
     var definition: Dictionary = Catalog.DEFINITIONS[id]
     if not transact({"wood": -int(definition.wood)}):
@@ -80,3 +88,8 @@ func advance_day() -> void:
     var report := food_projection()
     if transact({"food": report.net, "coins": report.coins}):
         last_day_report = report
+
+func start_visual_village() -> void:
+    layout_id = Layout.ID
+    buildings = Layout.INITIAL.duplicate()
+    initial_buildings = buildings.keys()

@@ -1,5 +1,14 @@
 extends Control
-## Frontend-only scene: no simulation, save writes, production or quest execution.
+## Pixel-art frontend bound to the existing settlement session controller.
+const Session = preload("res://scripts/presentation/village_session.gd")
+const Gestures = preload("res://scripts/presentation/world_gestures.gd")
+var gestures := Gestures.new()
+var blocked_touches: Dictionary = {}
+var session: Node2D
+var resource_label: Label
+var time_label: Label
+var worker_label: Label
+var management_panel: PanelContainer
 const Art = preload("res://scripts/visual/village_art.gd")
 var world: Node2D
 var viewport: SubViewport
@@ -18,8 +27,13 @@ var preview_kind: String = ""
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	session = Session.new()
+	session.frontend = self
+	session.settlement.start_visual_village()
 	_build_world()
 	_build_ui()
+	add_child(session)
+	world.sync_settlement(session.settlement)
 	resized.connect(_layout_world)
 	_layout_world()
 
@@ -112,11 +126,11 @@ func _build_ui() -> void:
 	row.add_theme_constant_override("separation",28)
 	top.add_child(row)
 	label(row,"SATRIYA  /  WARINGIN",18,"f3d99b").size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	for value in ["Pangan 128", "Kayu 86", "Warga 24", "Hari 07 · Pagi"]:
-		label(row,value,17,"fff0d1")
+	resource_label = label(row,"",17,"fff0d1")
+	time_label = label(row,"",17,"fff0d1")
 	var tag := panel(ui,Rect2(16,68,360,32))
 	tag.add_theme_stylebox_override("panel",style("3a5135","64814b"))
-	label(tag,"SPRITE KANDIDAT · DATA CONTOH",13,"e4edcb")
+	worker_label = label(tag,"",13,"e4edcb")
 	info_panel = panel(ui,Rect2(948,112,316,340))
 	info = stack(info_panel)
 	info_panel.hide()
@@ -134,13 +148,16 @@ func _build_ui() -> void:
 	bar.add_theme_constant_override("separation",8)
 	actions.add_child(bar)
 	button(bar,"Bangun",func() -> void: build_panel.visible = not build_panel.visible)
-	button(bar,"Krisis pangan",show_quest)
+	button(bar,"Kelola",func() -> void: management_panel.visible = not management_panel.visible)
 	button(bar,"−",func() -> void: set_zoom(zoom_level-0.25))
 	zoom_label = label(bar,"100%",16,"f3d99b")
 	button(bar,"+",func() -> void: set_zoom(zoom_level+0.25))
 	button(bar,"Reset",reset_view)
-	status = label(ui,"Klik objek · Geser peta · Scroll zoom\nG: footprint / Esc: tutup / Spasi: idle",14,"e4edcb")
-	status.position = Vector2(792,658)
+	status = label(ui,"Klik objek · Geser peta · Scroll zoom\nG: footprint / Esc: batal / Spasi: pause",14,"e4edcb")
+	status.position = Vector2(640,650)
+	status.size = Vector2(620,60)
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_build_management(ui)
 
 func show_info(title: String, subtitle: String, body: String) -> void:
 	for child in info.get_children():
@@ -152,14 +169,12 @@ func show_info(title: String, subtitle: String, body: String) -> void:
 	button(info,"Tutup informasi",func() -> void: info_panel.hide())
 	info_panel.show()
 
-func show_quest() -> void:
-	show_info("Cadangan menipis", "QUEST CONTOH · belum aktif", "Sari meminta bantuan:\n\n“Persediaan padi menipis.\nMari rawat sawah bersama.”\n\nTarget contoh: 150 ikat padi.\nHadiah contoh: kepercayaan.")
-	button(info,"Tinjau sawah",func() -> void: select_kind("field"))
-
-func preview_build(kind: String, title: String) -> void:
-	preview_kind = kind
-	select_kind(kind)
-	show_info("Rencana " + title, "PRATINJAU · bukan pembangunan", "Contoh bentuk disorot di desa.\n\nBiaya dan produksi belum\ntersambung pada demo ini.\n\nTidak mengubah stok atau save.")
+func preview_build(kind: String, _title: String) -> void:
+	preview_kind = "rice_field" if kind == "field" else kind
+	info_panel.hide()
+	build_panel.hide()
+	management_panel.hide()
+	status.text = "%s: %d kayu. Klik tanah kosong; Esc membatalkan." % [session.Catalog.DEFINITIONS[preview_kind].name,session.Catalog.DEFINITIONS[preview_kind].wood]
 
 func select_kind(kind: String) -> void:
 	for i in range(world.objects.size()):
@@ -168,28 +183,65 @@ func select_kind(kind: String) -> void:
 			world.queue_redraw()
 			return
 
+func screen_to_world(screen: Vector2) -> Vector2:
+	return (screen / size * Vector2(640,360)-world.position)/zoom_level
+
+func screen_to_cell(screen: Vector2) -> Vector2i:
+	var point := screen_to_world(screen)
+	return Vector2i(roundi((point.x/world.tile_half.x+point.y/world.tile_half.y)/2),roundi((point.y/world.tile_half.y-point.x/world.tile_half.x)/2))
+
+func update_preview(screen: Vector2) -> void:
+	world.preview_cells.clear()
+	if not preview_kind.is_empty():
+		var cell := screen_to_cell(screen)
+		var model: RefCounted = session.settlement
+		world.preview_cells = model.layout.cells(preview_kind,cell)
+		world.preview_valid = model.layout.validate_placement(preview_kind,cell,model.buildings) == "ok" and model.stocks.wood >= session.Catalog.DEFINITIONS[preview_kind].wood
+	world.queue_redraw()
+
 func select_at(screen: Vector2) -> void:
-	var point := screen / size * Vector2(640,360)
-	var index: int = world.pick((point-world.position)/zoom_level)
+	if session.character_panel.visible: return
+	var index: int = world.pick(screen_to_world(screen))
+	# Named characters win over placement; their sprites do not add workers.
+	if index >= 0:
+		var obj: Dictionary = world.objects[index]
+		if obj.kind == "leader" or (obj.kind == "farmer" and obj.cell == Vector2(13,9)):
+			world.selected = index
+			cancel_build()
+			management_panel.hide()
+			session._open_character(session.Interactions.PLAYER_ID if obj.kind == "leader" else session.Interactions.OFFICIAL_ID)
+			return
+	if not preview_kind.is_empty():
+		var result: String = session.settlement.try_place(preview_kind,screen_to_cell(screen))
+		var messages := {"ok":"Bangunan selesai.","occupied":"Footprint sudah terisi.","building_gap":"Sisakan satu tile antargedung.","reserved":"Jalan, air atau area landmark harus tetap terbuka.","outside_map":"Seluruh footprint harus di dalam peta.","insufficient_wood":"Kayu tidak cukup."}
+		status.text = messages.get(result,result)
+		if result == "ok":
+			world.sync_settlement(session.settlement)
+			refresh_hud()
+		update_preview(screen)
+		return
 	world.selected = index
 	world.queue_redraw()
-	if index < 0: return
+	if index < 0:
+		info_panel.hide()
+		return
 	var obj: Dictionary = world.objects[index]
-	var role: String = obj.kind
-	if role in ["leader","farmer","citizen"]:
-		show_info(obj.title,"KARAKTER CONTOH", "Suasana hati: tenang\nKegiatan: animasi dekoratif\n\n“Selamat pagi! Mari singgah\ndi pendopo desa.”\n\nBelum terhubung ke AI.")
+	if obj.has("model_id"):
+		var definition: Dictionary = session.Catalog.DEFINITIONS[obj.model_id]
+		var assigned: int = session.settlement.workforce().allocations.get(obj.origin,0)
+		var body := "Footprint %d x %d\n" % [obj.footprint.x,obj.footprint.y]
+		if obj.model_id == "rice_field": body += "Petani %d/1; panen %d/hari." % [assigned,int(definition.food) if assigned > 0 else 0]
+		elif obj.model_id == "house": body += "Pembangunan menambah 2 warga."
+		else: body += "Lumbung belum memberi bonus\nkapasitas pada model saat ini."
+		show_info(obj.title,"AWAL / IMPOR" if obj.initial else "BANGUNAN BARU",body)
 	else:
-		var descriptions := {
-			"joglo":"Rumah Jawa beratap tajug.\nInspirasi joglo; periode\nTumapel perlu riset.",
-			"house":"Dinding kayu dan bambu.\nAtap hangat, teras sederhana.\n\nPenghuni contoh: 4 warga.",
-			"field":"Padi muda dan pematang.\nSaluran air melewati sawah.\n\nHasil contoh: 12 ikat / hari.",
-			"granary":"Lantai panggung dan tangga.\nTempat menyimpan hasil padi.\n\nKapasitas contoh: 200 ikat.",
-			"pendopo":"Balai terbuka beratap susun.\nTempat warga berkumpul.\n\nInspirasi joglo Nusantara.",
-			"gate":"Dua pilar bata mengapit\nsatu tile jalan di tengah.\n\nInspirasi gaya Nusantara.",
-			"shrine":"Pelataran batu bertingkat.\nAksen budaya desa fiktif."}
-		var subtitle := "SPRITE CONTOH · arah disetujui"
-		if obj.has("footprint"): subtitle = "FOOTPRINT %d×%d · DATA CONTOH" % [obj.footprint.x,obj.footprint.y]
-		show_info(obj.title,subtitle,descriptions.get(role,"Vegetasi tropis dekoratif.\nBagian dari komposisi desa.")+"\n\nBukan rekonstruksi sejarah.")
+		show_info(obj.title,"LANDMARK / DEKORASI", "Tidak menghasilkan sumber daya.\nTidak menambah pekerja.\n\nInspirasi Nusantara; bukan\nrekonstruksi sejarah.")
+
+func cancel_build() -> void:
+	preview_kind = ""
+	status.text = "Mode lihat: klik bangunan atau tokoh. Bangun untuk memilih konstruksi."
+	world.preview_cells.clear()
+	world.queue_redraw()
 
 func set_zoom(value: float) -> void:
 	zoom_level = clampf(value,0.75,1.5)
@@ -201,14 +253,46 @@ func reset_view() -> void:
 	set_zoom(1.0)
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		session._close_character()
+		cancel_build()
+		info_panel.hide()
+		build_panel.hide()
+		management_panel.hide()
+		dragging = false
+		gestures.cancel()
+		get_viewport().set_input_as_handled()
+		return
+	if session.character_panel.visible:
+		dragging = false
+		gestures.cancel()
+		return
+	if event is InputEventScreenTouch:
+		if event.pressed and over_ui(event.position):
+			blocked_touches[event.index] = true
+			gestures.cancel()
+			return
+		if blocked_touches.has(event.index):
+			if not event.pressed: blocked_touches.erase(event.index)
+			return
+		if over_ui(event.position):
+			gestures.cancel()
+			return
+		apply_gesture(gestures.handle(event))
+	elif event is InputEventScreenDrag:
+		if over_ui(event.position) or not blocked_touches.is_empty(): gestures.cancel()
+		else: apply_gesture(gestures.handle(event))
+	if event.device == InputEvent.DEVICE_ID_EMULATION: return
 	# Release is observed even above HUD so a world drag cannot become stuck.
 	if event is InputEventMouseButton and not event.pressed:
 		if event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_MIDDLE]:
 			if dragging and not moved and event.button_index == MOUSE_BUTTON_LEFT:
-				if not get_viewport().gui_get_hovered_control(): select_at(event.position)
+				if not over_ui(event.position): select_at(event.position)
 			dragging = false
 
 func _unhandled_input(event: InputEvent) -> void:
+	if session.character_panel.visible or event.device == InputEvent.DEVICE_ID_EMULATION or not gestures.touches.is_empty() or not blocked_touches.is_empty(): return
+	if event is InputEventMouseMotion: update_preview(event.position)
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_G:
 			world.show_footprints = not world.show_footprints
@@ -217,7 +301,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			info_panel.hide()
 			build_panel.hide()
 		if event.keycode == KEY_SPACE:
-			world.animate = not world.animate
+			session._set_speed(1.0 if session.clock.speed == 0 else 0.0)
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_WHEEL_UP: set_zoom(zoom_level+0.25)
@@ -230,5 +314,79 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.position.distance_to(drag_start)>6: moved = true
 		if moved:
 			pan += event.relative / size * Vector2(640,360)
-			pan = pan.clamp(Vector2(-180,-100),Vector2(180,100))
+			pan = pan.clamp(Vector2(-500,-400),Vector2(500,150))
 			_layout_world()
+
+func _build_management(ui: Control) -> void:
+	management_panel = panel(ui,Rect2(16,115,560,280))
+	var column := stack(management_panel)
+	label(column,"Waktu, pekerja & simpanan",20)
+	var speeds := HBoxContainer.new()
+	column.add_child(speeds)
+	for entry in [["Pause",0.0],["1x",1.0],["2x",2.0],["3x",3.0]]:
+		button(speeds,entry[0],session._set_speed.bind(entry[1]))
+	var workers := HBoxContainer.new()
+	column.add_child(workers)
+	button(workers,"Petani -",session._change_farm_workers.bind(-1))
+	button(workers,"Petani +",session._change_farm_workers.bind(1))
+	button(workers,"Otomatis",session._automatic_farming)
+	button(workers,"Laras",session._open_character.bind(session.Interactions.OFFICIAL_ID))
+	var files := HBoxContainer.new()
+	column.add_child(files)
+	button(files,"Simpan",session._save_game)
+	button(files,"Muat",session._load_game.bind(false))
+	button(files,"Cadangan",session._load_game.bind(true))
+	var automatic := HBoxContainer.new()
+	column.add_child(automatic)
+	button(automatic,"Muat otomatis",session._load_autosave.bind(false))
+	button(automatic,"Cadangan auto",session._load_autosave.bind(true))
+	session.autosave_button = button(column,"",session._toggle_autosave)
+	session.autosave_button.tooltip_text = "Aktifkan untuk memakai slot otomatis bagi sesi ini."
+	session.autosave_label = label(column,"",14)
+	button(column,"Tutup",func() -> void: management_panel.hide())
+	management_panel.hide()
+	session.status_label = status
+	ui.add_child(session.character_panel)
+	session.character_panel.topic_requested.connect(session._character_topic)
+	session.character_panel.closed.connect(session._close_character)
+
+func refresh_hud() -> void:
+	var model: RefCounted = session.settlement
+	resource_label.text = "Pangan %d   Kayu %d   Uang %d   Warga %d" % [model.stocks.food,model.stocks.wood,model.stocks.coins,model.population]
+	time_label.text = "Hari %d / %dx" % [session.clock.day,int(session.clock.speed)]
+	var workers: Dictionary = model.workforce()
+	worker_label.text = "Petani %d/%d / Bebas %d / Pangan %+d/hari" % [workers.assigned,workers.slots,workers.idle,model.food_projection().net]
+	world.animate = session.clock.speed > 0
+
+func session_loaded() -> void:
+	cancel_build()
+	gestures.cancel()
+	blocked_touches.clear()
+	dragging = false
+	world.sync_settlement(session.settlement)
+	info_panel.hide()
+	reset_view()
+
+func over_ui(point: Vector2) -> bool:
+	if session.character_panel.visible: return true
+	var design := point / size * Vector2(1280,720)
+	if Rect2(12,10,1256,58).has_point(design) or Rect2(16,650,600,60).has_point(design): return true
+	for control: Control in [info_panel,build_panel,management_panel]:
+		if control.visible and Rect2(control.position,control.size).has_point(design): return true
+	return false
+
+func apply_gesture(command: Dictionary) -> void:
+	if command.has("tap"): select_at(command.tap)
+	if command.has("pan"):
+		pan = (pan+command.pan / size * Vector2(640,360)).clamp(Vector2(-500,-400),Vector2(500,150))
+		_layout_world()
+	if command.has("zoom"): set_zoom(zoom_level*command.zoom)
+
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT,NOTIFICATION_APPLICATION_PAUSED]:
+		dragging = false
+		gestures.cancel()
+		blocked_touches.clear()
+		if is_instance_valid(world): world.animate = false
+	elif what in [NOTIFICATION_APPLICATION_FOCUS_IN,NOTIFICATION_APPLICATION_RESUMED]:
+		if is_instance_valid(session) and is_instance_valid(worker_label): refresh_hud()
